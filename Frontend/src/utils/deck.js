@@ -76,9 +76,6 @@ const dealRiver = (deck) => {
   return dealHand(deck, 1);
 };
 
-const getCardImage = (card) => {
-  return `./cards/${card.suit}${card.card}.png`;
-};
 const getCardValue = (card) => {
   return card.value;
 };
@@ -92,7 +89,6 @@ export {
   generateDeck,
   shuffleDeck,
   dealCard,
-  getCardImage,
   getCardValue,
   dealHand,
   dealFlop,

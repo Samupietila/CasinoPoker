@@ -1,3 +1,4 @@
+/* CARD STYLES */
 .card-container {
   background-color: white;
   padding: 10px;
@@ -7,7 +8,6 @@
   height: 150px;
 }
 
-/* CARD STYLES */
 .card-value {
   grid-column: 1;
   grid-row: 1;
@@ -35,6 +35,14 @@
   height: 100%;
 }
 
+.card-slot {
+  height: 170px;
+  width: 120px;
+  margin: 10px;
+  border: 3px solid #ffffff9d;
+  border-radius: 18px;
+}
+
 /* BUTTON STYLES */
 
 .button-container {
@@ -57,4 +65,41 @@
 .button-text {
   color: white;
   font-size: 200%;
+}
+
+/* INFO STYLES */
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #124742;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+.info-label {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.info-value {
+  font-size: 1.2em;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.deck {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  position: relative;
+}
+
+.deck > * {
+  margin-right: -100px;
+  transform: rotate(3deg);
 }

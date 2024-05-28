@@ -12,7 +12,59 @@
 .main-container {
   display: flex;
   justify-content: center;
-  height: 100%;
+}
+
+.game-container {
+  flex-direction: column;
+  width: 100%;
+}
+
+.dealer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 200px;
+}
+
+.player-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-container {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 25%;
+  margin: 10px;
+  border-radius: 15px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: auto;
+  margin: 10px;
+  border: 3px solid #ffffff;
+  border-radius: 5px;
 }
 
 /* NAVBAR STYLES */
@@ -25,7 +77,6 @@
 }
 
 .nav-container {
-  width: 100vw;
   margin: 0 auto;
   background-color: black;
   padding: 5px;
