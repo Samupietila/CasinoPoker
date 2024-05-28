@@ -1,11 +1,13 @@
 import React from "react";
 import "./App.css";
+import "./styles/styles.css";
 
 import Card from "./components/Card";
 import Deck from "./components/Deck";
 import Bet from "./components/Bet";
 import Table from "./components/Table.js";
 import Player from "./components/Player.js";
+import CardFaceDown from "./components/CardFaceDown";
 
 import {
   generateDeck,
@@ -20,11 +22,9 @@ import {
 function App() {
   return (
     <div className="App">
-      <h1>Poker</h1>
+      <h1>React Poker</h1>
       <Card />
-      <Deck />
-      <Bet />
-      <Player />
+      <CardFaceDown />
     </div>
   );
 }
