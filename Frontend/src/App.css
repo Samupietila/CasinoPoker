@@ -1,5 +1,4 @@
 .App {
-  display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -7,4 +6,65 @@
   height: 100vh;
   text-align: center;
   background-color: #124714;
+}
+
+/* CONTAINER STYLES */
+.main-container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+/* NAVBAR STYLES */
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  color: white;
+}
+
+.nav-container {
+  width: 100vw;
+  margin: 0 auto;
+  background-color: black;
+  padding: 5px;
+}
+
+.navbar-card-container {
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.navbar-card-value {
+  grid-column: 1;
+  grid-row: 1;
+  border-radius: 1px;
+  transition: 0.3s;
+  color: black;
+  height: 50%;
+  width: 100%;
+  font-size: 1vw;
+}
+
+.navbar-card-suit {
+  grid-column: 1;
+  grid-row: 2;
+  border-radius: 1px;
+  transition: 0.3s;
+  color: black;
+  height: 50%;
+  width: 100%;
+  font-size: 1vw;
+}
+
+.date {
+  font-size: 1.5vw;
+  margin-right: 10px;
 }
