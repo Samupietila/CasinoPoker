@@ -1,13 +1,13 @@
 import React from "react";
 
 const Card = (props) => {
-  const { card, suit, value } = props;
+  const { suit, value } = props;
   return (
-    /* <div className="card">
-      <img src={props.suit} alt={props.suit} />
-      <h2>{props.value}</h2>
+    /* <div className="container">
+      <div className="card-value">{prop.value}</div>
+      <div className="card-suit">{prop.suit}</div>
     </div>*/
-    <div className="container">
+    <div className="card-container">
       <div className="card-value">K</div>
       <div className="card-suit">♥</div>
     </div>

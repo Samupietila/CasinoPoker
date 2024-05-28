@@ -7,7 +7,7 @@ const imageStyle = {
 
 const CardFaceDown = () => {
   return (
-    <div className="container">
+    <div className="card-container">
       <img className="card-face-down" style={imageStyle} src={imagePath} />
     </div>
   );
