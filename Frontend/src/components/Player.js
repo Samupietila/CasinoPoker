@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
+import { GameContext } from "../contexts/GameContext";
 
 const Player = (props) => {
+  const { potValue, betValue, funds } = props;
   return (
-    <div>
-      <div className="funds">
-        <h2>{props.funds}</h2>
+    <div className="info-container">
+      <div className="info">
+        <span className="info-label">Pot:</span>
+        <span className="info-value">{potValue} $</span>
       </div>
-      <div className="player">
-        <h2>{props.username}</h2>
+      <div className="info">
+        <span className="info-label">Current Bet:</span>
+        <span className="info-value">{betValue} $</span>
       </div>
-      <div className="buttons">
-        <button>sth</button>
-        <button>sth</button>
+      <div className="info">
+        <span className="info-label">Player Balance:</span>
+        <span className="info-value">{funds} $</span>
       </div>
     </div>
   );

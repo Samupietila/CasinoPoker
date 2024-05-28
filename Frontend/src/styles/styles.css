@@ -67,6 +67,22 @@
   font-size: 200%;
 }
 
+.button-info {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: auto;
+  margin: 10px;
+  border: 3px solid #ffffff;
+  color: white;
+  border-radius: 5px;
+}
+
+.button-info:hover {
+  transform: scale(1.1);
+  border-color: #ffd700;
+}
+
 /* INFO STYLES */
 
 .info {
@@ -97,6 +113,7 @@
   justify-content: left;
   align-items: center;
   position: relative;
+  margin: 10px;
 }
 
 .deck > * {

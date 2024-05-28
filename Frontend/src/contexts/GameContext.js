@@ -1,11 +1,15 @@
 import React from "react";
 
 //initial state of the game
+const minBet = 10;
+
 const initialState = {
   deck: [],
   funds: 1000,
-  username: "Player",
-  sth: () => {},
+  potValue: 0,
+  betValue: minBet,
+  leftButton: "Deal",
+  rightButton: "Bet",
 };
 
 const actionTypes = {
@@ -48,3 +52,4 @@ const gameReducer = (state, action) => {
       return state;
   }
 };
+export const GameContext = React.createContext(initialState);

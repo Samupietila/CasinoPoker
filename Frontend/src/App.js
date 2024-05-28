@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./App.css";
 import "./styles/styles.css";
+import { GameContext } from "./contexts/GameContext";
 
 import Card from "./components/Card";
 import Navbar from "./components/Navbar";
 import ControlButton from "./components/ControlButton.js";
-import Table from "./components/Table.js";
-import Player from "./components/Player.js";
 import CardFaceDown from "./components/CardFaceDown";
+import Deck from "./components/Deck.js";
+import Player from "./components/Player.js";
+import Table from "./components/Table.js";
+import InfoButton from "./components/InfoButton.js";
 
 import {
   generateDeck,
@@ -20,6 +23,7 @@ import {
 } from "./utils/deck.js";
 
 function App() {
+  const game = useContext(GameContext);
   return (
     <div className="App">
       <Navbar />
@@ -30,16 +34,10 @@ function App() {
               <CardFaceDown />
             </div>
             <div className="card-slot">
-              <Card suit="♥" value="7" />
+              <Card suit={game.deck} value={game.deck} />
             </div>
           </div>
-          <div className="table-container">
-            <div className="card-slot"></div>
-            <div className="card-slot"></div>
-            <div className="card-slot"></div>
-            <div className="card-slot"></div>
-            <div className="card-slot"></div>
-          </div>
+          <Table />
           <div className="player-container">
             <div className="card-slot">
               <Card suit="♣" value="K" />
@@ -50,29 +48,16 @@ function App() {
           </div>
         </div>
         <div className="control-container">
-          <div className="deck">
-            <CardFaceDown />
-            <CardFaceDown />
-            <CardFaceDown />
-            <CardFaceDown />
-          </div>
-          <div className="info-container">
-            <div className="info">
-              <span className="info-label">Pot:</span>
-              <span className="info-value">$0</span>
-            </div>
-            <div className="info">
-              <span className="info-label">Current Bet:</span>
-              <span className="info-value">$0</span>
-            </div>
-            <div className="info">
-              <span className="info-label">Player Balance:</span>
-              <span className="info-value">$1000</span>
-            </div>
-          </div>
+          <Deck />
+          <InfoButton />
+          <Player
+            potValue={game.potValue}
+            betValue={game.betValue}
+            funds={game.funds}
+          />
           <div className="buttons-container">
-            <ControlButton text="Deal" />
-            <ControlButton text="Deal" />
+            <ControlButton text={game.leftButton} />
+            <ControlButton text={game.rightButton} />
           </div>
         </div>
       </div>

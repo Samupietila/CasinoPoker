@@ -1,10 +1,13 @@
 import React from "react";
+import CardFaceDown from "./CardFaceDown";
 
-const Deck = (props) => {
-  const { deck } = props;
+const Deck = () => {
   return (
     <div className="deck">
-      <h1>Deck</h1>
+      <CardFaceDown />
+      <CardFaceDown />
+      <CardFaceDown />
+      <CardFaceDown />
     </div>
   );
 };
