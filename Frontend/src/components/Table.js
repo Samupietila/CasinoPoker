@@ -1,10 +1,6 @@
 import React, { useContext } from "react";
 import Card from "./Card";
-import {
-  gameReducer,
-  initialState,
-  GameContext,
-} from "../contexts/GameContext";
+import { GameContext } from "../contexts/GameContext";
 
 const Table = () => {
   const { state } = useContext(GameContext);
@@ -42,20 +38,17 @@ const Table = () => {
 
       {/* turn card */}
       <div className="card-slot">
-        {state.dealerHand[0] && (
-          <Card
-            suit={state.dealerHand[0].suit}
-            value={state.dealerHand[0].card}
-          />
+        {state.turnCard[0] && (
+          <Card suit={state.turnCard[0].suit} value={state.turnCard[0].card} />
         )}
       </div>
 
       {/* river card */}
       <div className="card-slot">
-        {state.dealerHand[0] && (
+        {state.riverCard[0] && (
           <Card
-            suit={state.dealerHand[0].suit}
-            value={state.dealerHand[0].card}
+            suit={state.riverCard[0].suit}
+            value={state.riverCard[0].card}
           />
         )}
       </div>

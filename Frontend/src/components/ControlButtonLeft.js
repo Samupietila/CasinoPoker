@@ -5,15 +5,12 @@ function ControlButton({ text, actionType }) {
   const { dispatch } = useContext(GameContext);
 
   useEffect(() => {
-    console.log("Control Button Rendered");
+    console.log("Control Button LEFT Rendered");
   }, []);
-
-  console.log(actionType);
-  console.log(text);
 
   const handleClick = (event) => {
     dispatch({ type: actionType, payload: text });
-    console.log("Control button Clicked");
+    console.log("Control button LEFT Clicked");
     event.stopPropagation();
   };
 

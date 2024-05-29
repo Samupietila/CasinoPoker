@@ -9,6 +9,8 @@ export const actionTypes = {
   PLACE_BET: "PLACE_BET",
   DEAL_CARDS: "DEAL_CARDS",
   DEAL_FLOP: "DEAL_FLOP",
+  DEAL_TURN: "DEAL_TURN",
+  DEAL_RIVER: "DEAL_RIVER",
   PAY_WINNINGS: "PAY_WINNINGS",
   RESET_GAME: "RESET_GAME",
 };
@@ -22,12 +24,13 @@ export const initialState = {
   rightButton: "Bet",
   currentState: "NOT_STARTED",
   leftButtonNextState: actionTypes.START_GAME,
+  rightButtonNextState: actionTypes.PLACE_BET,
   playerHand: [],
   dealerHand: [],
   tableCards: [],
   flopCards: [],
-  turnCard: null,
-  riverCard: null,
+  turnCard: [],
+  riverCard: [],
 };
 
 const getDeckLength = (deck) => {
@@ -38,6 +41,7 @@ export const gameReducer = (state, action) => {
   console.log(action);
   console.log("state changed", action);
   switch (action.type) {
+    // STARTING THE GAME
     case actionTypes.START_GAME:
       const deckStart = Deck.generateDeck();
       Deck.shuffleDeck(deckStart);
@@ -46,9 +50,12 @@ export const gameReducer = (state, action) => {
         ...state,
         deck: deckStart,
         leftButton: "started game",
+        rightButton: "Fold",
         leftButtonNextState: actionTypes.DEAL_CARDS,
+        currentState: "STARTED",
       };
 
+    // PLACING A BET
     case actionTypes.PLACE_BET:
       console.log(state.betValue);
       const newBet = state.betValue + minBet;
@@ -58,6 +65,7 @@ export const gameReducer = (state, action) => {
         betValue: newBet,
       };
 
+    // DEALING CARDS TO PLAYER AND DEALER
     case actionTypes.DEAL_CARDS:
       const deckDeal = state.deck;
       const playerHand = Deck.dealHand(deckDeal, 2);
@@ -72,12 +80,12 @@ export const gameReducer = (state, action) => {
         deck: deckDeal,
         potValue: potValue,
         leftButton: "next is flop",
-        rightButton: "Fold",
         playerHand: playerHand,
         dealerHand: dealerHand,
         leftButtonNextState: actionTypes.DEAL_FLOP,
       };
 
+    // DEALING THE FLOP
     case actionTypes.DEAL_FLOP:
       const deckFlop = state.deck;
       const flopCards = Deck.dealFlop(deckFlop);
@@ -88,20 +96,36 @@ export const gameReducer = (state, action) => {
         deck: deckFlop,
         flopCards: flopCards,
         leftButton: "next is turn",
-        rightButton: "Fold",
+        leftButtonNextState: actionTypes.DEAL_TURN,
       };
 
-    case actionTypes.PAY_WINNINGS:
+    // DEALING THE TURN
+    case actionTypes.DEAL_TURN:
+      const deckTurn = state.deck;
+      const turnCard = Deck.dealTurn(deckTurn);
+      console.log(turnCard);
+      getDeckLength(deckTurn);
+
       return {
         ...state,
-        funds: state.funds,
+        deck: deckTurn,
+        turnCard: turnCard,
+        leftButton: "next is river",
+        leftButtonNextState: actionTypes.DEAL_RIVER,
       };
 
-    case actionTypes.RESET_GAME:
+    // DEALING THE RIVER
+    case actionTypes.DEAL_RIVER:
+      const deckRiver = state.deck;
+      const riverCard = Deck.dealRiver(deckRiver);
+      console.log(riverCard);
+      getDeckLength(deckRiver);
+
       return {
-        ...initialState,
-        deck: [],
-        funds: 1000,
+        ...state,
+        deck: deckRiver,
+        riverCard: riverCard,
+        leftButton: "next is showdown",
       };
     default:
       return initialState;
