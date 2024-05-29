@@ -1,5 +1,6 @@
 const totalCards = 52;
 const suits = ["♥", "♦", "♠", "♣"];
+const suitsText = ["hearts", "diamonds", "spades", "clubs"];
 const cards = [
   "2",
   "3",
@@ -35,7 +36,12 @@ const generateDeck = () => {
   let deck = [];
   suits.forEach((suit) => {
     cards.forEach((card) => {
-      deck.push({ card, suit, value: VALUES[card] });
+      deck.push({
+        card,
+        suit,
+        value: VALUES[card],
+        suitText: suitsText[suits.indexOf(suit)],
+      });
     });
   });
   return deck;
