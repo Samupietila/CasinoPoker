@@ -119,10 +119,30 @@ export const gameReducer = (state, action) => {
         deck: deckRiver,
         riverCard: riverCard,
         leftButton: "next is showdown",
+        leftButtonNextState: actionTypes.CHECK_WINNER,
       };
 
     // CHECKING THE WINNER
     case actionTypes.CHECK_WINNER:
+      const endPlayerHand = state.playerHand;
+      const endDealerHand = state.dealerHand;
+      const tableCards = state.tableCards.concat(
+        state.flopCards,
+        state.turnCard,
+        state.riverCard
+      );
+      console.log(endPlayerHand);
+      console.log(endDealerHand);
+      console.log(tableCards);
+      const winner = evaluateWinner(endPlayerHand, endDealerHand, tableCards);
+      console.log(winner);
+      return {
+        ...state,
+        playerHand: endPlayerHand,
+        dealerHand: endDealerHand,
+        leftButton: "next is pay winnings",
+        leftButtonNextState: actionTypes.PAY_WINNINGS,
+      };
 
     default:
       return initialState;
