@@ -121,3 +121,23 @@
   margin-right: -110px;
   transform: rotate(3deg);
 }
+
+.popup {
+  position: fixed; /* Position the popup relative to the viewport */
+  top: 0; /* Align the top edge of the popup with the top edge of the viewport */
+  left: 0; /* Align the left edge of the popup with the left edge of the viewport */
+  width: 100%; /* Make the popup as wide as the viewport */
+  height: 100%; /* Make the popup as tall as the viewport */
+  display: flex; /* Use flexbox to center the popup content */
+  justify-content: center; /* Center the popup content horizontally */
+  align-items: center; /* Center the popup content vertically */
+  background-color: rgba(0, 0, 0, 0.5); /* Add a semi-transparent background */
+  z-index: 1000; /* Ensure the popup appears above other elements */
+}
+
+.popup-inner {
+  /* Style the popup content */
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+}

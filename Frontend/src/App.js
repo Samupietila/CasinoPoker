@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useState, useCallback, useReducer } from "react";
 import "./App.css";
 import "./styles/styles.css";
 import {
@@ -16,16 +16,22 @@ import Player from "./components/Player.js";
 import PlayerHand from "./components/PlayerHand.js";
 import DealerHand from "./components/DealerHand.js";
 import Table from "./components/Table.js";
-import InfoButton from "./components/InfoButton.js";
+import { InfoPopUp, InfoButton } from "./components/InfoButton.js";
 import Game from "./components/Game.js";
 
 function App() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const memoizedDispatch = useCallback(dispatch, []);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleClick = () => {
+    setShowPopup(!showPopup);
+  };
 
   return (
     <GameContext.Provider value={{ state, dispatch: memoizedDispatch }}>
       <Game />
+
       <div className="App">
         <Navbar />
         <div className="main-container">
@@ -33,10 +39,11 @@ function App() {
             <DealerHand />
             <Table />
             <PlayerHand />
+            <InfoPopUp trigger={showPopup} setTrigger={setShowPopup} />
           </div>
           <div className="control-container">
             <Deck />
-            <InfoButton />
+            <InfoButton onClick={handleClick} />
             <Player />
             <div className="buttons-container">
               <ControlButtonLeft
