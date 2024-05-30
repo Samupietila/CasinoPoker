@@ -17,6 +17,7 @@ import PlayerHand from "./components/PlayerHand.js";
 import DealerHand from "./components/DealerHand.js";
 import Table from "./components/Table.js";
 import InfoButton from "./components/InfoButton.js";
+import Game from "./components/Game.js";
 
 function App() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
@@ -24,6 +25,7 @@ function App() {
 
   return (
     <GameContext.Provider value={{ state, dispatch: memoizedDispatch }}>
+      <Game />
       <div className="App">
         <Navbar />
         <div className="main-container">
@@ -43,11 +45,7 @@ function App() {
               />
               <ControlButtonRight
                 text={state.rightButton}
-                actionType={
-                  state.currentState === "NOT_STARTED"
-                    ? actionTypes.PLACE_BET
-                    : actionTypes.RESET_GAME
-                }
+                actionType={state.rightButtonNextState}
               />
             </div>
           </div>

@@ -190,37 +190,35 @@ function evaluateWinner(hand1, hand2, tableCards) {
   const hand1Rank = getHandRank(bestHand1);
   const hand2Rank = getHandRank(bestHand2);
   if (hand1Rank > hand2Rank) {
-    return (
-      "You win! with a " +
-      getPrintByHandRank(hand1Rank) +
-      "!" +
-      "Dealers hand was a " +
-      getPrintByHandRank(hand2Rank) +
-      "!"
-    );
-  } else if (hand2Rank == hand1Rank) {
+    return 1;
+    // "You win! with a " +
+    // getPrintByHandRank(hand1Rank) +
+    // "!" +
+    // "Dealers hand was a " +
+    // getPrintByHandRank(hand2Rank) +
+    // "!"
+  } else if (hand2Rank === hand1Rank) {
     const hand1Values = hand1.map((card) => card.value);
     const hand2Values = hand2.map((card) => card.value);
     const hand1MaxValue = Math.max(...hand1Values);
     const hand2MaxValue = Math.max(...hand2Values);
     if (hand1MaxValue > hand2MaxValue) {
-      return (
-        "You win! with a " +
-        getPrintByHandRank(hand1Rank) +
-        "!" +
-        "Dealers hand was a " +
-        getPrintByHandRank(hand2Rank) +
-        "!"
-      );
-    } else if (hand1MaxValue == hand2MaxValue) {
-      return (
-        "It's a tie! Both players have a " + getPrintByHandRank(hand1Rank) + "!"
-      );
+      return 1;
+      // "You win! with a " +
+      // getPrintByHandRank(hand1Rank) +
+      // "!" +
+      // "Dealers hand was a " +
+      // getPrintByHandRank(hand2Rank) +
+      // "!"
+    } else if (hand1MaxValue === hand2MaxValue) {
+      return 0;
+      // "It's a tie! Both players have a " + getPrintByHandRank(hand1Rank) + "!"
     } else {
-      return "Dealer wins!" + " with a " + getPrintByHandRank(hand2Rank) + "!";
+      return 2; // "Dealer wins!" + " with a " + getPrintByHandRank(hand2Rank) + "!";
     }
   } else {
-    return "Dealer wins!" + " with a " + getPrintByHandRank(hand2Rank) + "!";
+    return 2;
+    //"Dealer wins!" + " with a " + getPrintByHandRank(hand2Rank) + "!";
   }
 }
 
