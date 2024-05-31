@@ -14,6 +14,8 @@ export const actionTypes = {
   DEAL_TURN: "DEAL_TURN",
   DEAL_RIVER: "DEAL_RIVER",
   CHECK_WINNER: "CHECK_WINNER",
+  FOLD: "FOLD",
+  CHECK: "CHECK",
   UPDATE_FUNDS: "UPDATE_FUNDS",
   RESET_GAME: "RESET_GAME",
   NEW_GAME: "NEW_GAME",
@@ -29,11 +31,13 @@ export const initialState = {
   originalBet: minBet,
   potValue: 0,
   betValue: minBet,
-  leftButton: "Start Game",
-  rightButton: "Bet",
+  firstButton: "Start Game",
+  secondButton: "Bet",
+  thirdButton: "Fold",
   currentState: "NOT_STARTED",
-  leftButtonNextState: actionTypes.DEAL_CARDS,
-  rightButtonNextState: actionTypes.PLACE_BET,
+  firstButtonNextState: actionTypes.DEAL_CARDS,
+  secondButtonNextState: actionTypes.PLACE_BET,
+  thirdButtonNextState: actionTypes.FOLD,
   playerHand: [],
   dealerHand: [],
   tableCards: [],
@@ -71,7 +75,7 @@ export const gameReducer = (state, action) => {
       const maxBet = getMaxBet(state.funds);
       const newBet = state.betValue + minBet;
       if (newBet > maxBet) {
-        return { ...state, betValue: state.maxBet, rightButton: "MaxBet" };
+        return { ...state, betValue: state.maxBet, secondButton: "MaxBet" };
       }
       return {
         ...state,
@@ -98,11 +102,14 @@ export const gameReducer = (state, action) => {
         ...state,
         deck: deckDeal,
         potValue: potValue,
-        leftButton: "Flop (2x bet)",
-        rightButton: "Fold",
+        firstButton: "Flop (2x bet)",
+        secondButton: "Check",
+        thirdButton: "Fold",
         playerHand: playerHand,
         dealerHand: dealerHand,
-        leftButtonNextState: actionTypes.DEAL_FLOP,
+        firstButtonNextState: actionTypes.DEAL_FLOP,
+        secondButtonNextState: actionTypes.CHECK,
+        thirdButtonNextState: actionTypes.FOLD,
         currentState: "STARTED",
       };
 
@@ -117,8 +124,8 @@ export const gameReducer = (state, action) => {
         deck: deckFlop,
         potValue: potValueFlop,
         flopCards: flopCards,
-        leftButton: "Raise (1x bet)",
-        leftButtonNextState: actionTypes.DEAL_TURN,
+        firstButton: "Raise (1x bet)",
+        firstButtonNextState: actionTypes.DEAL_TURN,
       };
 
     // DEALING THE TURN
@@ -132,8 +139,8 @@ export const gameReducer = (state, action) => {
         deck: deckTurn,
         turnCard: turnCard,
         potValue: potValueTurn,
-        leftButton: "next is river",
-        leftButtonNextState: actionTypes.DEAL_RIVER,
+        firstButton: "next is river",
+        firstButtonNextState: actionTypes.DEAL_RIVER,
       };
 
     // DEALING THE RIVER
@@ -149,9 +156,9 @@ export const gameReducer = (state, action) => {
         deck: deckRiver,
         potValue: potValueRiver,
         riverCard: riverCard,
-        leftButton: "next is showdown",
+        firstButton: "next is showdown",
         currentState: "RIVER",
-        leftButtonNextState: actionTypes.CHECK_WINNER,
+        firstButtonNextState: actionTypes.CHECK_WINNER,
       };
 
     // CHECKING THE WINNER
@@ -168,9 +175,9 @@ export const gameReducer = (state, action) => {
         ...state,
         playerHand: endPlayerHand,
         dealerHand: endDealerHand,
-        leftButton: winner,
+        firstButton: winner,
         winner: winner,
-        leftButtonNextState: actionTypes.UPDATE_FUNDS,
+        firstButtonNextState: actionTypes.UPDATE_FUNDS,
         currentState: "WINNER",
       };
 
@@ -181,10 +188,10 @@ export const gameReducer = (state, action) => {
           ...state,
           funds: state.funds + state.potValue,
           potValue: 0,
-          leftButton: "You Won",
-          rightButton: "Play Again",
-          leftButtonNextState: actionTypes.NEW_GAME,
-          rightButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+          firstButton: "You Won",
+          secondButton: "Play Again",
+          firstButtonNextState: actionTypes.NEW_GAME,
+          secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
         };
       }
       if (state.winner === 0) {
@@ -192,20 +199,20 @@ export const gameReducer = (state, action) => {
           ...state,
           funds: state.funds,
           potValue: 0,
-          leftButton: "You Tied",
-          rightButton: "Play Again",
-          leftButtonNextState: actionTypes.NEW_GAME,
-          rightButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+          firstButton: "You Tied",
+          secondButton: "Play Again",
+          firstButtonNextState: actionTypes.NEW_GAME,
+          secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
         };
       }
       return {
         ...state,
         funds: state.funds - state.potValue,
         potValue: 0,
-        leftButton: "You Lost",
-        rightButton: "Play Again",
-        leftButtonNextState: actionTypes.NEW_GAME,
-        rightButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+        firstButton: "You Lost",
+        secondButton: "Play Again",
+        firstButtonNextState: actionTypes.NEW_GAME,
+        secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
       };
 
     // New Game
@@ -218,11 +225,11 @@ export const gameReducer = (state, action) => {
         originalBet: minBet,
         potValue: 0,
         betValue: minBet,
-        leftButton: "Start Game",
-        rightButton: "Bet",
+        firstButton: "Start Game",
+        secondButton: "Bet",
         currentState: "NOT_STARTED",
-        leftButtonNextState: actionTypes.DEAL_CARDS,
-        rightButtonNextState: actionTypes.PLACE_BET,
+        firstButtonNextState: actionTypes.DEAL_CARDS,
+        secondButtonNextState: actionTypes.PLACE_BET,
         playerHand: [],
         dealerHand: [],
         tableCards: [],
@@ -241,11 +248,9 @@ export const gameReducer = (state, action) => {
         originalBet: state.betValue,
         potValue: state.betValue,
         betValue: state.betValue,
-        leftButton: "Flop (2x bet)",
-        rightButton: "Fold",
+        firstButton: "Flop (2x bet)",
+        secondButton: "Fold",
         currentState: "NEW_GAME_SAME_BET",
-        leftButtonNextState: actionTypes.DEAL_CARDS,
-        rightButtonNextState: actionTypes.PLACE_BET,
         playerHand: [],
         dealerHand: [],
         tableCards: [],
@@ -253,6 +258,14 @@ export const gameReducer = (state, action) => {
         turnCard: [],
         riverCard: [],
         winner: "",
+      };
+
+    // FOLDING
+    case actionTypes.FOLD:
+      return {
+        ...state,
+        winner: "",
+        currentState: "FOLD",
       };
 
     default:

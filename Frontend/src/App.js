@@ -1,15 +1,9 @@
 import React, { useState, useCallback, useReducer } from "react";
 import "./App.css";
 import "./styles/styles.css";
-import {
-  GameContext,
-  actionTypes,
-  gameReducer,
-  initialState,
-} from "./contexts/GameContext";
+import { GameContext, gameReducer, initialState } from "./contexts/GameContext";
 import Navbar from "./components/Navbar";
-import ControlButtonRight from "./components/ControlButtonRight.js";
-import ControlButtonLeft from "./components/ControlButtonLeft.js";
+import ControlButton from "./components/ControlButtonRight.js";
 import CardFaceDown from "./components/CardFaceDown";
 import Deck from "./components/Deck.js";
 import Player from "./components/Player.js";
@@ -46,13 +40,17 @@ function App() {
             <InfoButton onClick={handleClick} />
             <Player />
             <div className="buttons-container">
-              <ControlButtonLeft
-                text={state.leftButton}
-                actionType={state.leftButtonNextState}
+              <ControlButton
+                text={state.firstButton}
+                actionType={state.firstButtonNextState}
               />
-              <ControlButtonRight
-                text={state.rightButton}
-                actionType={state.rightButtonNextState}
+              <ControlButton
+                text={state.secondButton}
+                actionType={state.secondButtonNextState}
+              />
+              <ControlButton
+                text={state.thirdButton}
+                actionType={state.thirdButtonNextState}
               />
             </div>
           </div>

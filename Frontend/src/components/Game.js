@@ -18,7 +18,7 @@ function Game() {
         }, 500);
         break;
       case "NEW_GAME_SAME_BET":
-        if (state.betValue > state.funds) {
+        if (state.betValue > state.funds || state.funds === 0) {
           dispatch({ type: actionTypes.NEW_GAME });
         } else {
           timeoutId = setTimeout(() => {
@@ -31,6 +31,11 @@ function Game() {
           alert("You are out of funds! Game will reset.");
           dispatch({ type: actionTypes.RESET_GAME });
         }
+        break;
+      case "FOLD":
+        dispatch({ type: actionTypes.UPDATE_FUNDS });
+        break;
+
       default:
         return;
     }
