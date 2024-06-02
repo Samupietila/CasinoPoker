@@ -11,6 +11,7 @@ const DealerHand = () => {
           <Card
             suit={state.dealerHand[0].suit}
             value={state.dealerHand[0].card}
+            isFaceUp={state.dealerHandState}
           />
         )}
       </div>
@@ -19,6 +20,7 @@ const DealerHand = () => {
           <Card
             suit={state.dealerHand[1].suit}
             value={state.dealerHand[1].card}
+            isFaceUp={state.dealerHandState}
           />
         )}
       </div>

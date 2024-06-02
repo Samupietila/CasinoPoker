@@ -25,12 +25,15 @@ export const actionTypes = {
 
 // initial state of the game
 export const initialState = {
+  // info for the game
   deck: [],
   funds: 100,
   maxBet: 100 / 3,
   originalBet: minBet,
   potValue: 0,
   betValue: minBet,
+
+  // buttons for the game
   firstButton: "Start Game",
   secondButton: "Bet",
   thirdButton: "Fold",
@@ -38,12 +41,18 @@ export const initialState = {
   firstButtonNextState: actionTypes.DEAL_CARDS,
   secondButtonNextState: actionTypes.PLACE_BET,
   thirdButtonNextState: actionTypes.FOLD,
+
+  // cards for the game
   playerHand: [],
+  playerHandState: "True",
   dealerHand: [],
+  dealerHandState: "False",
   tableCards: [],
   flopCards: [],
   turnCard: [],
   riverCard: [],
+
+  // winner of the game
   winner: "",
 };
 
@@ -153,6 +162,7 @@ export const gameReducer = (state, action) => {
       // sleep 3 seconds before checking the winner.
       return {
         ...state,
+        dealerHandState: "True",
         deck: deckRiver,
         potValue: potValueRiver,
         riverCard: riverCard,
@@ -232,6 +242,7 @@ export const gameReducer = (state, action) => {
         secondButtonNextState: actionTypes.PLACE_BET,
         playerHand: [],
         dealerHand: [],
+        dealerHandState: "False",
         tableCards: [],
         flopCards: [],
         turnCard: [],
@@ -253,11 +264,55 @@ export const gameReducer = (state, action) => {
         currentState: "NEW_GAME_SAME_BET",
         playerHand: [],
         dealerHand: [],
+        dealerHandState: "False",
         tableCards: [],
         flopCards: [],
         turnCard: [],
         riverCard: [],
         winner: "",
+      };
+
+    // CHECKING
+    case actionTypes.CHECK:
+      switch (state.firstButtonNextState) {
+        case actionTypes.DEAL_FLOP:
+          return {
+            ...state,
+            currentState: "STARTED",
+          };
+        case actionTypes.DEAL_TURN:
+          const deckTurn = state.deck;
+          const turnCard = Deck.dealTurn(deckTurn);
+          return {
+            ...state,
+            deck: deckTurn,
+            turnCard: turnCard,
+            firstButton: "CHECKED",
+            firstButtonNextState: actionTypes.DEAL_RIVER,
+            currentState: "CHECK",
+          };
+        case actionTypes.DEAL_RIVER:
+          console.log("CHECKING RIVER");
+          const deckRiver = state.deck;
+          const riverCard = Deck.dealRiver(deckRiver);
+          return {
+            ...state,
+            deck: deckRiver,
+            riverCard: riverCard,
+            firstButton: "CHECKED",
+            dealerHandState: "True",
+            firstButtonNextState: actionTypes.CHECK_WINNER,
+            currentState: "RIVER",
+          };
+        default:
+          return {
+            ...state,
+            currentState: "CHECK",
+          };
+      }
+      return {
+        ...state,
+        currentState: "CHECK",
       };
 
     // FOLDING

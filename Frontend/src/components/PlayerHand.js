@@ -11,6 +11,7 @@ const PlayerHand = () => {
           <Card
             suit={state.playerHand[0].suit}
             value={state.playerHand[0].card}
+            isFaceUp={state.playerHandState}
           />
         )}
       </div>
@@ -19,6 +20,7 @@ const PlayerHand = () => {
           <Card
             suit={state.playerHand[1].suit}
             value={state.playerHand[1].card}
+            isFaceUp={state.playerHandState}
           />
         )}
       </div>

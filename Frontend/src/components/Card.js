@@ -1,12 +1,21 @@
 import React from "react";
+import CardFaceDown from "./CardFaceDown";
 
 const Card = (props) => {
-  const { suit, value } = props;
+  const { suit, value, isFaceUp } = props;
   return (
-    <div className="card-container">
-      <div className="card-value">{value}</div>
-      <div className="card-suit">{suit}</div>
-    </div>
+    <>
+      {isFaceUp === "True" ? (
+        <>
+          <div className="card-container">
+            <div className="card-value">{value}</div>
+            <div className="card-suit">{suit}</div>
+          </div>
+        </>
+      ) : (
+        <CardFaceDown />
+      )}
+    </>
   );
 };
 export default Card;
