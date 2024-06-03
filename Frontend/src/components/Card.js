@@ -3,13 +3,16 @@ import CardFaceDown from "./CardFaceDown";
 
 const Card = (props) => {
   const { suit, value, isFaceUp } = props;
+  const isRed = suit === "♥" || suit === "♦";
   return (
     <>
-      {isFaceUp === "True" ? (
+      {isFaceUp ? (
         <>
           <div className="card-container">
-            <div className="card-value">{value}</div>
-            <div className="card-suit">{suit}</div>
+            <div className={`card-value ${isRed ? "red-text" : ""}`}>
+              {value}
+            </div>
+            <div className={`card-suit ${isRed ? "red-text" : ""}`}>{suit}</div>
           </div>
         </>
       ) : (

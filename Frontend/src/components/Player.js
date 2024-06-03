@@ -14,6 +14,10 @@ const Player = () => {
         <span className="info-value">{state.betValue} $</span>
       </div>
       <div className="info">
+        <span className="info-label">Bonus bet:</span>
+        <span className="info-value">{state.bonusBet} $</span>
+      </div>
+      <div className="info">
         <span className="info-label">Player Balance:</span>
         <span className="info-value">{state.funds} $</span>
       </div>

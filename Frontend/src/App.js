@@ -3,8 +3,7 @@ import "./App.css";
 import "./styles/styles.css";
 import { GameContext, gameReducer, initialState } from "./contexts/GameContext";
 import Navbar from "./components/Navbar";
-import ControlButton from "./components/ControlButtonRight.js";
-import CardFaceDown from "./components/CardFaceDown";
+import ControlButton from "./components/ControlButton.js";
 import Deck from "./components/Deck.js";
 import Player from "./components/Player.js";
 import PlayerHand from "./components/PlayerHand.js";
@@ -43,14 +42,19 @@ function App() {
               <ControlButton
                 text={state.firstButton}
                 actionType={state.firstButtonNextState}
+                state={state.firstButtonViewState}
               />
               <ControlButton
                 text={state.secondButton}
                 actionType={state.secondButtonNextState}
+                state={state.secondButtonViewState}
               />
+            </div>
+            <div className="buttons-container">
               <ControlButton
                 text={state.thirdButton}
                 actionType={state.thirdButtonNextState}
+                state={state.thirdButtonViewState}
               />
             </div>
           </div>

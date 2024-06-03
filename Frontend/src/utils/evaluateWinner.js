@@ -18,6 +18,25 @@ function getCombinations(cards, k) {
   return result;
 }
 
+// check if the bonus bet wins
+export function isBonusBetWin(hand) {
+  const sortedHand = hand.sort((a, b) => b.value - a.value);
+  if (sortedHand[0].value === sortedHand[1].value) {
+    if (sortedHand[0].value === 14) {
+      return 50;
+    } else if (sortedHand[0].value >= 11 && sortedHand[0].value <= 13) {
+      return 10;
+    }
+  } else if (sortedHand[0].value === 14) {
+    if (sortedHand[1].value === 13) {
+      return sortedHand[0].suit === sortedHand[1].suit ? 40 : 20;
+    } else if (sortedHand[1].value === 12 || sortedHand[1].value === 11) {
+      return sortedHand[0].suit === sortedHand[1].suit ? 30 : 0;
+    }
+  }
+  return 0;
+}
+
 // check if the hand is a straight flush
 function isStraightFlush(hand) {
   const sortedHand = hand.sort((a, b) => a.value - b.value);
