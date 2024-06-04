@@ -68,11 +68,21 @@ const getDeckLength = (deck) => {
 const getMaxBet = (funds) => {
   const thirdOfFunds = funds / 5;
   let maxBet = minBet;
-  while (maxBet + minBet <= thirdOfFunds) {
+  while (maxBet + minBet <= thirdOfFunds && maxBet + minBet <= 20) {
     maxBet += minBet;
   }
   return maxBet;
 };
+const getMaxBonusBet = (funds, betValue) => {
+  const bonusBet = funds - betValue;
+  if (bonusBet > 5) {
+    return 5;
+  }
+  return bonusBet;
+};
+
+const canPlayerBetBonus = (funds, betValue) => funds >= betValue;
+const canPlayerRaise = (funds, betValue) => funds >= betValue * 2;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -97,8 +107,9 @@ export const gameReducer = (state, action) => {
     // PLACING A BONUS BET
     case actionTypes.PLACE_BONUS_BET:
       const bonusBet = state.bonusBet + 1;
-      if (bonusBet > 5) {
-        return { ...state, bonusBet: 5, thirdButton: "MaxBet" };
+      const maxBonusBet = getMaxBonusBet(state.funds, state.betValue);
+      if (bonusBet > maxBonusBet) {
+        return { ...state, bonusBet: maxBonusBet, thirdButton: "MaxBet" };
       }
       return {
         ...state,
@@ -139,7 +150,7 @@ export const gameReducer = (state, action) => {
     case actionTypes.DEAL_FLOP:
       const deckFlop = state.deck;
       const flopCards = Deck.dealFlop(deckFlop);
-      getDeckLength(deckFlop);
+
       const potValueFlop = state.potValue + state.originalBet * 2;
       return {
         ...state,
@@ -157,7 +168,7 @@ export const gameReducer = (state, action) => {
     case actionTypes.DEAL_TURN:
       const deckTurn = state.deck;
       const turnCard = Deck.dealTurn(deckTurn);
-      getDeckLength(deckTurn);
+
       const potValueTurn = state.potValue + state.originalBet;
       return {
         ...state,
@@ -172,7 +183,7 @@ export const gameReducer = (state, action) => {
       console.log("DEALING RIVER");
       const deckRiver = state.deck;
       const riverCard = Deck.dealRiver(deckRiver);
-      getDeckLength(deckRiver);
+
       const potValueRiver = state.potValue + state.originalBet;
       // sleep 3 seconds before checking the winner.
       return {
@@ -197,6 +208,7 @@ export const gameReducer = (state, action) => {
         state.riverCard
       );
       const winner = evaluateWinner(endPlayerHand, endDealerHand, tableCards);
+      console.log("WINNER: ", winner);
       return {
         ...state,
         playerHand: endPlayerHand,

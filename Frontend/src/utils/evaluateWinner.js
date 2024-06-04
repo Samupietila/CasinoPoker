@@ -60,7 +60,10 @@ function isQuads(hand) {
     acc[value] = (acc[value] || 0) + 1;
     return acc;
   }, {});
-  return Object.values(valueCounts).includes(4);
+  const quadsValue = Object.keys(valueCounts).find(
+    (value) => valueCounts[value] === 4
+  );
+  return quadsValue ? parseInt(quadsValue) : false;
 }
 
 // check if the hand is a full house
@@ -70,10 +73,15 @@ function isFullHouse(hand) {
     acc[value] = (acc[value] || 0) + 1;
     return acc;
   }, {});
-  return (
-    Object.values(valueCounts).includes(3) &&
-    Object.values(valueCounts).includes(2)
+  const threeValue = Object.keys(valueCounts).find(
+    (value) => valueCounts[value] === 3
   );
+  const pairValue = Object.keys(valueCounts).find(
+    (value) => valueCounts[value] === 2
+  );
+  return threeValue && pairValue
+    ? [parseInt(threeValue), parseInt(pairValue)]
+    : false;
 }
 
 //check if the hand is a flush
@@ -99,7 +107,10 @@ function isTrips(hand) {
     acc[value] = (acc[value] || 0) + 1;
     return acc;
   }, {});
-  return Object.values(valueCounts).includes(3);
+  const tripsValue = Object.keys(valueCounts).find(
+    (value) => valueCounts[value] === 3
+  );
+  return tripsValue ? parseInt(tripsValue) : false;
 }
 
 //check if the hand is a two pair
@@ -109,7 +120,12 @@ function isTwoPair(hand) {
     acc[value] = (acc[value] || 0) + 1;
     return acc;
   }, {});
-  return Object.values(valueCounts).filter((count) => count === 2).length === 2;
+  const pairValues = Object.keys(valueCounts).filter(
+    (value) => valueCounts[value] === 2
+  );
+  return pairValues.length === 2
+    ? pairValues.map((value) => parseInt(value))
+    : false;
 }
 
 //check if the hand is a pair
@@ -119,7 +135,10 @@ function isPair(hand) {
     acc[value] = (acc[value] || 0) + 1;
     return acc;
   }, {});
-  return Object.values(valueCounts).includes(2);
+  const pairValue = Object.keys(valueCounts).find(
+    (value) => valueCounts[value] === 2
+  );
+  return pairValue ? parseInt(pairValue) : false;
 }
 
 //check biggest card
@@ -131,23 +150,60 @@ function isHighCard(hand) {
 //get the rank of the hand
 function getHandRank(hand) {
   if (isStraightFlush(hand)) {
-    return 9;
+    return { rank: 9, highCard: isHighCard(hand) };
   } else if (isQuads(hand)) {
-    return 8;
+    const quadsValue = isQuads(hand);
+    return {
+      rank: 8,
+      fourOfAKind: quadsValue,
+      kicker: hand.find((card) => card.value !== quadsValue).value,
+    };
   } else if (isFullHouse(hand)) {
-    return 7;
+    const [threeValue, pairValue] = isFullHouse(hand);
+    return {
+      rank: 7,
+      threeOfAKind: threeValue,
+      pair: pairValue,
+    };
   } else if (isFlush(hand)) {
-    return 6;
+    return { rank: 6, highCard: isHighCard(hand) };
   } else if (isStraight(hand)) {
-    return 5;
+    return { rank: 5, highCard: isHighCard(hand) };
   } else if (isTrips(hand)) {
-    return 4;
+    const tripsValue = isTrips(hand);
+    return {
+      rank: 4,
+      threeOfAKind: tripsValue,
+      kickers: hand
+        .filter((card) => card.value !== tripsValue)
+        .map((card) => card.value)
+        .sort((a, b) => b - a),
+    };
   } else if (isTwoPair(hand)) {
-    return 3;
+    const [pair1Value, pair2Value] = isTwoPair(hand).sort((a, b) => b - a);
+    return {
+      rank: 3,
+      twoPair: [pair1Value, pair2Value],
+      kicker: hand.find(
+        (card) => card.value !== pair1Value && card.value !== pair2Value
+      ).value,
+    };
   } else if (isPair(hand)) {
-    return 2;
+    const pairValue = isPair(hand);
+    return {
+      rank: 2,
+      pair: pairValue,
+      kickers: hand
+        .filter((card) => card.value !== pairValue)
+        .map((card) => card.value)
+        .sort((a, b) => b - a),
+    };
   } else {
-    return 1;
+    return {
+      rank: 1,
+      highCard: isHighCard(hand),
+      kickers: [hand[1].value, hand[2].value, hand[3].value, hand[4].value],
+    };
   }
 }
 
@@ -170,31 +226,111 @@ function getPrintByHandRank(handRank) {
       return "Two Pair";
     case 2:
       return "Pair";
-    default:
+    case 1:
       return "High Card";
   }
 }
 
 // get the best hand from the hand and the table cards
 function getBestHand(hand, tableCards) {
+  console.log("getbesthand" + hand, tableCards);
   const allCards = hand.concat(tableCards);
   const allCombinations = getCombinations(allCards, 5);
-
-  let bestHand = [];
-  let bestHandRank = -1;
-
+  let bestHand = null;
   for (const currentHand of allCombinations) {
-    const currentHandRank = getHandRank(currentHand);
-    if (currentHandRank > bestHandRank) {
-      bestHand = currentHand;
-      bestHandRank = currentHandRank;
-    } else if (currentHandRank === bestHandRank) {
-      const currentHandMaxValue = Math.max(
-        ...currentHand.map((card) => card.value)
-      );
-      const bestHandMaxValue = Math.max(...bestHand.map((card) => card.value));
-      if (currentHandMaxValue > bestHandMaxValue) {
-        bestHand = currentHand;
+    const currentHandRankInfo = getHandRank(currentHand);
+    if (!bestHand || currentHandRankInfo.rank > bestHand.rank) {
+      bestHand = currentHandRankInfo;
+    } else if (currentHandRankInfo.rank === bestHand.rank) {
+      switch (currentHandRankInfo.rank) {
+        case 9:
+          if (currentHandRankInfo.highCard > bestHand.highCard) {
+            bestHand = currentHandRankInfo;
+          }
+          break;
+        case 8:
+          if (currentHandRankInfo.fourOfAKind > bestHand.fourOfAKind) {
+            bestHand = currentHandRankInfo;
+          } else if (currentHandRankInfo.fourOfAKind === bestHand.fourOfAKind) {
+            if (currentHandRankInfo.kicker > bestHand.kicker) {
+              bestHand = currentHandRankInfo;
+            }
+          }
+          break;
+        case 7:
+          if (currentHandRankInfo.threeOfAKind > bestHand.threeOfAKind) {
+            bestHand = currentHandRankInfo;
+          } else if (
+            currentHandRankInfo.threeOfAKind === bestHand.threeOfAKind
+          ) {
+            if (currentHandRankInfo.pair > bestHand.pair) {
+              bestHand = currentHandRankInfo;
+            }
+          }
+          break;
+        case 6:
+          if (currentHandRankInfo.highCard > bestHand.highCard) {
+            bestHand = currentHandRankInfo;
+          }
+          break;
+        case 5:
+          if (currentHandRankInfo.highCard > bestHand.highCard) {
+            bestHand = currentHandRankInfo;
+          }
+          break;
+        case 4:
+          if (currentHandRankInfo.threeOfAKind > bestHand.threeOfAKind) {
+            bestHand = currentHandRankInfo;
+          } else if (
+            currentHandRankInfo.threeOfAKind === bestHand.threeOfAKind
+          ) {
+            if (currentHandRankInfo.kickers[0] > bestHand.kickers[0]) {
+              bestHand = currentHandRankInfo;
+            } else if (currentHandRankInfo.kickers[0] === bestHand.kickers[0]) {
+              if (currentHandRankInfo.kickers[1] > bestHand.kickers[1]) {
+                bestHand = currentHandRankInfo;
+              }
+            }
+          }
+          break;
+        case 3:
+          if (currentHandRankInfo.twoPair[0] > bestHand.twoPair[0]) {
+            bestHand = currentHandRankInfo;
+          } else if (currentHandRankInfo.twoPair[0] === bestHand.twoPair[0]) {
+            if (currentHandRankInfo.twoPair[1] > bestHand.twoPair[1]) {
+              bestHand = currentHandRankInfo;
+            } else if (currentHandRankInfo.twoPair[1] === bestHand.twoPair[1]) {
+              if (currentHandRankInfo.kicker > bestHand.kicker) {
+                bestHand = currentHandRankInfo;
+              }
+            }
+          }
+          break;
+        case 2:
+          if (currentHandRankInfo.pair > bestHand.pair) {
+            bestHand = currentHandRankInfo;
+          } else if (currentHandRankInfo.pair === bestHand.pair) {
+            if (currentHandRankInfo.kickers[0] > bestHand.kickers[0]) {
+              bestHand = currentHandRankInfo;
+            } else if (currentHandRankInfo.kickers[0] === bestHand.kickers[0]) {
+              if (currentHandRankInfo.kickers[1] > bestHand.kickers[1]) {
+                bestHand = currentHandRankInfo;
+              } else if (
+                currentHandRankInfo.kickers[1] === bestHand.kickers[1]
+              ) {
+                if (currentHandRankInfo.kickers[2] > bestHand.kickers[2]) {
+                  bestHand = currentHandRankInfo;
+                }
+              }
+            }
+          }
+          break;
+        case 1:
+          if (currentHandRankInfo.highCard > bestHand.highCard) {
+            bestHand = currentHandRankInfo;
+            console.log("bestHandwith HIGH CARD" + bestHand);
+          }
+          break;
       }
     }
   }
@@ -206,39 +342,143 @@ function getBestHand(hand, tableCards) {
 function evaluateWinner(hand1, hand2, tableCards) {
   const bestHand1 = getBestHand(hand1, tableCards);
   const bestHand2 = getBestHand(hand2, tableCards);
-  const hand1Rank = getHandRank(bestHand1);
-  const hand2Rank = getHandRank(bestHand2);
-  if (hand1Rank > hand2Rank) {
+  console.log("bestHand1", bestHand1);
+  console.log("bestHand2", bestHand2);
+  console.log(hand1, hand2, tableCards);
+  if (bestHand1.rank > bestHand2.rank) {
     return 1;
-    // "You win! with a " +
-    // getPrintByHandRank(hand1Rank) +
-    // "!" +
-    // "Dealers hand was a " +
-    // getPrintByHandRank(hand2Rank) +
-    // "!"
-  } else if (hand2Rank === hand1Rank) {
-    const hand1Values = hand1.map((card) => card.value);
-    const hand2Values = hand2.map((card) => card.value);
-    const hand1MaxValue = Math.max(...hand1Values);
-    const hand2MaxValue = Math.max(...hand2Values);
-    if (hand1MaxValue > hand2MaxValue) {
-      return 1;
-      // "You win! with a " +
-      // getPrintByHandRank(hand1Rank) +
-      // "!" +
-      // "Dealers hand was a " +
-      // getPrintByHandRank(hand2Rank) +
-      // "!"
-    } else if (hand1MaxValue === hand2MaxValue) {
-      return 0;
-      // "It's a tie! Both players have a " + getPrintByHandRank(hand1Rank) + "!"
-    } else {
-      return 2; // "Dealer wins!" + " with a " + getPrintByHandRank(hand2Rank) + "!";
-    }
-  } else {
+  } else if (bestHand1.rank < bestHand2.rank) {
     return 2;
-    //"Dealer wins!" + " with a " + getPrintByHandRank(hand2Rank) + "!";
+  } else {
+    switch (bestHand1.rank) {
+      case 9:
+        if (bestHand1.highCard > bestHand2.highCard) {
+          return 1;
+        } else if (bestHand1.highCard < bestHand2.highCard) {
+          return 2;
+        } else {
+          return 0;
+        }
+      case 8:
+        if (bestHand1.fourOfAKind > bestHand2.fourOfAKind) {
+          return 1;
+        } else if (bestHand1.fourOfAKind < bestHand2.fourOfAKind) {
+          return 2;
+        } else {
+          if (bestHand1.kicker > bestHand2.kicker) {
+            return 1;
+          } else if (bestHand1.kicker < bestHand2.kicker) {
+            return 2;
+          } else {
+            return 0;
+          }
+        }
+      case 7:
+        if (bestHand1.threeOfAKind > bestHand2.threeOfAKind) {
+          return 1;
+        } else if (bestHand1.threeOfAKind < bestHand2.threeOfAKind) {
+          return 2;
+        } else {
+          if (bestHand1.pair > bestHand2.pair) {
+            return 1;
+          } else if (bestHand1.pair < bestHand2.pair) {
+            return 2;
+          } else {
+            return 0;
+          }
+        }
+      case 6:
+        if (bestHand1.highCard > bestHand2.highCard) {
+          return 1;
+        } else if (bestHand1.highCard < bestHand2.highCard) {
+          return 2;
+        } else {
+          return 0;
+        }
+      case 5:
+        if (bestHand1.highCard > bestHand2.highCard) {
+          return 1;
+        } else if (bestHand1.highCard < bestHand2.highCard) {
+          return 2;
+        } else {
+          return 0;
+        }
+      case 4:
+        if (bestHand1.threeOfAKind > bestHand2.threeOfAKind) {
+          return 1;
+        } else if (bestHand1.threeOfAKind < bestHand2.threeOfAKind) {
+          return 2;
+        } else {
+          if (bestHand1.kickers[0] > bestHand2.kickers[0]) {
+            return 1;
+          } else if (bestHand1.kickers[0] < bestHand2.kickers[0]) {
+            return 2;
+          } else {
+            if (bestHand1.kickers[1] > bestHand2.kickers[1]) {
+              return 1;
+            } else if (bestHand1.kickers[1] < bestHand2.kickers[1]) {
+              return 2;
+            } else {
+              return 0;
+            }
+          }
+        }
+      case 3:
+        if (bestHand1.twoPair[0] > bestHand2.twoPair[0]) {
+          return 1;
+        } else if (bestHand1.twoPair[0] < bestHand2.twoPair[0]) {
+          return 2;
+        } else {
+          if (bestHand1.twoPair[1] > bestHand2.twoPair[1]) {
+            return 1;
+          } else if (bestHand1.twoPair[1] < bestHand2.twoPair[1]) {
+            return 2;
+          } else {
+            if (bestHand1.kicker > bestHand2.kicker) {
+              return 1;
+            } else if (bestHand1.kicker < bestHand2.kicker) {
+              return 2;
+            } else {
+              return 0;
+            }
+          }
+        }
+      case 2:
+        if (bestHand1.pair > bestHand2.pair) {
+          return 1;
+        } else if (bestHand1.pair < bestHand2.pair) {
+          return 2;
+        } else {
+          if (bestHand1.kickers[0] > bestHand2.kickers[0]) {
+            return 1;
+          } else if (bestHand1.kickers[0] < bestHand2.kickers[0]) {
+            return 2;
+          } else {
+            if (bestHand1.kickers[1] > bestHand2.kickers[1]) {
+              return 1;
+            } else if (bestHand1.kickers[1] < bestHand2.kickers[1]) {
+              return 2;
+            } else {
+              if (bestHand1.kickers[2] > bestHand2.kickers[2]) {
+                return 1;
+              } else if (bestHand1.kickers[2] < bestHand2.kickers[2]) {
+                return 2;
+              } else {
+                return 0;
+              }
+            }
+          }
+        }
+      case 1:
+        for (let i = 0; i < bestHand1.kickers.length; i++) {
+          if (bestHand1.kickers[i] > bestHand2.kickers[i]) {
+            return 1;
+          } else if (bestHand1.kickers[i] < bestHand2.kickers[i]) {
+            return 2;
+          }
+        }
+        return 0;
+    }
   }
 }
-
 export { evaluateWinner };
