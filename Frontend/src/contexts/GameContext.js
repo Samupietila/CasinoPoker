@@ -22,6 +22,11 @@ export const actionTypes = {
   NEW_GAME: "NEW_GAME",
   NEW_GAME_SAME_BET: "NEW_GAME_SAME_BET",
   INVALID_BET: "INVALID_BET",
+  SET_PLAYER_HAND_STATE: "SET_PLAYER_HAND_STATE",
+  SET_DEALER_HAND_STATE: "SET_DEALER_HAND_STATE",
+  SET_FLOP_CARDS_STATE: "SET_FLOP_CARDS_STATE",
+  SET_TURN_CARD_STATE: "SET_TURN_CARD_STATE",
+  SET_RIVER_CARD_STATE: "SET_RIVER_CARD_STATE",
 };
 
 // initial state of the game
@@ -29,7 +34,7 @@ export const initialState = {
   // info for the game
   deck: [],
   funds: 100,
-  maxBet: 100 / 3,
+  maxBet: 0,
   originalBet: minBet,
   bonusBet: 0,
   potValue: 0,
@@ -49,13 +54,16 @@ export const initialState = {
 
   // cards for the game
   playerHand: [],
-  playerHandState: true,
+  playerHandState: false,
   dealerHand: [],
   dealerHandState: false,
   tableCards: [],
   flopCards: [],
+  flopCardsState: false,
   turnCard: [],
+  turnCardState: false,
   riverCard: [],
+  riverCardState: false,
 
   // winner of the game
   winner: "",
@@ -80,9 +88,6 @@ const getMaxBonusBet = (funds, betValue) => {
   }
   return bonusBet;
 };
-
-const canPlayerBetBonus = (funds, betValue) => funds >= betValue;
-const canPlayerRaise = (funds, betValue) => funds >= betValue * 2;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -142,7 +147,6 @@ export const gameReducer = (state, action) => {
         secondButtonViewState: true,
         thirdButtonNextState: actionTypes.FOLD,
         thirdButtonViewState: false,
-
         currentState: "STARTED",
       };
 
@@ -162,6 +166,7 @@ export const gameReducer = (state, action) => {
         thirdButton: "Check",
         thirdButtonNextState: actionTypes.CHECK,
         thirdButtonViewState: true,
+        currentState: "FLOP",
       };
 
     // DEALING THE TURN
@@ -176,6 +181,7 @@ export const gameReducer = (state, action) => {
         turnCard: turnCard,
         potValue: potValueTurn,
         firstButtonNextState: actionTypes.DEAL_RIVER,
+        currentState: "TURN",
       };
 
     // DEALING THE RIVER
@@ -188,7 +194,6 @@ export const gameReducer = (state, action) => {
       // sleep 3 seconds before checking the winner.
       return {
         ...state,
-        dealerHandState: true,
         deck: deckRiver,
         potValue: potValueRiver,
         riverCard: riverCard,
@@ -349,6 +354,36 @@ export const gameReducer = (state, action) => {
         ...state,
         winner: "",
         currentState: "FOLD",
+      };
+
+    case actionTypes.SET_PLAYER_HAND_STATE:
+      return {
+        ...state,
+        playerHandState: action.payload,
+      };
+
+    case actionTypes.SET_DEALER_HAND_STATE:
+      return {
+        ...state,
+        dealerHandState: action.payload,
+      };
+
+    case actionTypes.SET_FLOP_CARDS_STATE:
+      return {
+        ...state,
+        flopCardsState: action.payload,
+      };
+
+    case actionTypes.SET_TURN_CARD_STATE:
+      return {
+        ...state,
+        turnCardState: action.payload,
+      };
+
+    case actionTypes.SET_RIVER_CARD_STATE:
+      return {
+        ...state,
+        riverCardState: action.payload,
       };
 
     default:

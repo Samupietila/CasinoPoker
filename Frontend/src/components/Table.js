@@ -12,7 +12,7 @@ const Table = () => {
           <Card
             suit={state.flopCards[0].suit}
             value={state.flopCards[0].card}
-            isFaceUp={state.playerHandState}
+            isFaceUp={state.flopCardsState}
           />
         )}
       </div>
@@ -23,7 +23,7 @@ const Table = () => {
           <Card
             suit={state.flopCards[1].suit}
             value={state.flopCards[1].card}
-            isFaceUp={state.playerHandState}
+            isFaceUp={state.flopCardsState}
           />
         )}
       </div>
@@ -34,7 +34,7 @@ const Table = () => {
           <Card
             suit={state.flopCards[2].suit}
             value={state.flopCards[2].card}
-            isFaceUp={state.playerHandState}
+            isFaceUp={state.flopCardsState}
           />
         )}
       </div>
@@ -45,7 +45,7 @@ const Table = () => {
           <Card
             suit={state.turnCard[0].suit}
             value={state.turnCard[0].card}
-            isFaceUp={state.playerHandState}
+            isFaceUp={state.turnCardState}
           />
         )}
       </div>
@@ -56,7 +56,7 @@ const Table = () => {
           <Card
             suit={state.riverCard[0].suit}
             value={state.riverCard[0].card}
-            isFaceUp={state.playerHandState}
+            isFaceUp={state.riverCardState}
           />
         )}
       </div>

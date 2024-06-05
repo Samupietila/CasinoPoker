@@ -32,9 +32,12 @@ const Card = (props) => {
   }, [isFaceUp]);
 
   return (
-    <>
-      {isFaceUp ? (
-        <>
+    <div className={`card-flip ${isFaceUp ? "flipped" : ""}`}>
+      <div>
+        <div className="back">
+          <CardFaceDown />
+        </div>
+        <div className="front">
           <div className="card-container">
             <div
               ref={cardValueRef}
@@ -49,11 +52,9 @@ const Card = (props) => {
               {suit}
             </div>
           </div>
-        </>
-      ) : (
-        <CardFaceDown />
-      )}
-    </>
+        </div>
+      </div>
+    </div>
   );
 };
 
