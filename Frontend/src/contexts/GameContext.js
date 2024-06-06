@@ -71,10 +71,6 @@ export const initialState = {
   winner: "",
 };
 
-const getDeckLength = (deck) => {
-  return console.log(deck.length);
-};
-
 const getMaxBet = (funds) => {
   const thirdOfFunds = funds / 5;
   let maxBet = minBet;
@@ -90,10 +86,6 @@ const getMaxBonusBet = (funds, betValue) => {
   }
   return bonusBet;
 };
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 export const gameReducer = (state, action) => {
   switch (action.type) {
@@ -131,7 +123,6 @@ export const gameReducer = (state, action) => {
       Deck.shuffleDeck(deckDeal);
       const playerHand = Deck.dealHand(deckDeal, 2);
       const dealerHand = Deck.dealHand(deckDeal, 2);
-      console.log("playerHand: ", playerHand);
       const potValue = state.betValue;
       const bonusWinnings = isBonusBetWin(playerHand);
       const updatedFunds = state.funds + bonusWinnings - state.bonusBet;
@@ -157,6 +148,21 @@ export const gameReducer = (state, action) => {
       const deckFlop = state.deck;
       const flopCards = Deck.dealFlop(deckFlop);
       const potValueFlop = state.potValue + state.originalBet * 2;
+      console.log("POT VALUE FLOP: ", potValueFlop + state.originalBet);
+      console.log("FUNDS" + state.funds);
+      if (state.funds < potValueFlop + state.originalBet) {
+        return {
+          ...state,
+          deck: deckFlop,
+          potValue: potValueFlop,
+          flopCards: flopCards,
+          firstButtonViewState: false,
+          thirdButton: "Check",
+          thirdButtonNextState: actionTypes.CHECK_FLOP,
+          thirdButtonViewState: true,
+          currentState: "FLOP",
+        };
+      }
       return {
         ...state,
         deck: deckFlop,
@@ -181,6 +187,17 @@ export const gameReducer = (state, action) => {
           turnCard: turnCard,
 
           currentState: "CHECK_TURN",
+        };
+      } else if (state.funds < potValueTurn + state.originalBet) {
+        return {
+          ...state,
+          deck: deckTurn,
+          turnCard: turnCard,
+          potValue: potValueTurn,
+          firstButtonViewState: false,
+          firstButton: "THIS SHOULD BE HIDDEN",
+          thirdButtonNextState: actionTypes.CHECK_TURN,
+          currentState: "TURN",
         };
       }
       return {

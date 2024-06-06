@@ -26,7 +26,12 @@ function Game() {
         break;
 
       case "NEW_GAME_SAME_BET":
-        if (state.betValue > state.funds || state.funds === 0) {
+        if (state.betValue > state.funds) {
+          dispatch({ type: actionTypes.NEW_GAME });
+        } else if (state.betValue * 3 + state.bonusBet > state.funds) {
+          alert(
+            "You don't have enough funds to continue with the same bet. Choose new bet."
+          );
           dispatch({ type: actionTypes.NEW_GAME });
         } else {
           dispatch({ type: actionTypes.SET_DEALER_HAND_STATE, payload: false });
@@ -41,9 +46,14 @@ function Game() {
         break;
 
       case "NOT_STARTED":
-        if (state.betValue > state.funds) {
+        if (state.betValue * 3 + state.bonusBet > state.funds) {
           alert("You are out of funds! Game will reset.");
           dispatch({ type: actionTypes.RESET_GAME });
+        } else if (state.betValue * 3 + state.bonusBet > state.funds) {
+          alert(
+            "You don't have enough funds to continue with the same bet. Choose new bet."
+          );
+          dispatch({ type: actionTypes.NEW_GAME });
         }
         dispatch({ type: actionTypes.SET_DEALER_HAND_STATE, payload: false });
         dispatch({ type: actionTypes.SET_PLAYER_HAND_STATE, payload: false });
