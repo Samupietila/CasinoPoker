@@ -55,8 +55,6 @@ function App() {
                 actionType={state.secondButtonNextState}
                 state={state.secondButtonViewState}
               />
-            </div>
-            <div className="buttons-container">
               <ControlButton
                 text={state.thirdButton}
                 actionType={state.thirdButtonNextState}

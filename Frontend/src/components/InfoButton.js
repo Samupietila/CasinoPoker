@@ -1,10 +1,9 @@
 import React from "react";
-import { useState } from "react";
 
 const InfoButton = ({ onClick }) => {
   return (
-    <div className="button-info" onClick={onClick}>
-      <span className="info-label">INFO</span>
+    <div className="button-container" onClick={onClick}>
+      INFO
     </div>
   );
 };

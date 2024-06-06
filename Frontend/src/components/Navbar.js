@@ -10,17 +10,17 @@ const Navbar = () => {
     <div className="nav-container">
       <div className="navbar">
         <div className="date">{dateString}</div>
-        <Card suit="♣" value="C" />
-        <Card suit="♣" value="a" />
-        <Card suit="♣" value="s" />
+        <Card suit="♥" value="C" />
+        <Card suit="♠" value="a" />
+        <Card suit="♦" value="s" />
         <Card suit="♣" value="i" />
-        <Card suit="♣" value="n" />
+        <Card suit="♥" value="n" />
+        <Card suit="♠" value="o" />
+        <Card suit="♦" value="P" />
         <Card suit="♣" value="o" />
-        <Card suit="♣" value="P" />
-        <Card suit="♣" value="o" />
-        <Card suit="♣" value="k" />
-        <Card suit="♣" value="e" />
-        <Card suit="♣" value="r" />
+        <Card suit="♥" value="k" />
+        <Card suit="♠" value="e" />
+        <Card suit="♦" value="r" />
       </div>
     </div>
   );

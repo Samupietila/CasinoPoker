@@ -17,7 +17,7 @@ function ControlButton({ text, actionType, state }) {
     <>
       {state ? (
         <div className="button-container" onClick={handleClick}>
-          <div className="button-text">{text}</div>
+          {text}
         </div>
       ) : (
         <div className="button-container-disabled"></div>
