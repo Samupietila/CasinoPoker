@@ -12,7 +12,6 @@ const PlayerHand = () => {
             suit={state.playerHand[0].suit}
             value={state.playerHand[0].card}
             isFaceUp={state.playerHandState}
-            className="player-card-1"
           />
         )}
       </div>
@@ -22,7 +21,6 @@ const PlayerHand = () => {
             suit={state.playerHand[1].suit}
             value={state.playerHand[1].card}
             isFaceUp={state.playerHandState}
-            className="player-card-2"
           />
         )}
       </div>

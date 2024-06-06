@@ -66,59 +66,6 @@
   transform: rotateY(180deg);
 }
 
-/* DEALING ANIMATION */
-@keyframes slide-player-card-1 {
-  from {
-    transform: translate(var(--animation-from-x), var(--animation-from-y));
-  }
-  to {
-    transform: translate(0, 0);
-  }
-}
-
-@keyframes slide-player-card-2 {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.player-card-1 {
-  animation: slide-player-card-1 1s forwards;
-}
-
-.player-card-2 {
-  animation: slide-player-card-2 1s forwards;
-}
-
-@keyframes slide-dealer-card-1 {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-dealer-card-2 {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.card.dealer-card-1 {
-  animation: slide-dealer-card-0 1s forwards;
-}
-
-.card.dealer-card-2 {
-  animation: slide-dealer-card-1 1s forwards;
-}
-
 /* BUTTON STYLES */
 
 .button-container {

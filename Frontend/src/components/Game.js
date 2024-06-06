@@ -74,8 +74,18 @@ function Game() {
         dispatch({ type: actionTypes.UPDATE_FUNDS });
         break;
 
-      case "CHECK":
-        dispatch({ type: actionTypes.CHECK });
+      case "CHECK_FLOP":
+        timeoutId = setTimeout(() => {
+          dispatch({ type: actionTypes.SET_FLOP_CARDS_STATE, payload: true });
+          dispatch({ type: actionTypes.DEAL_TURN });
+        }, 500);
+        break;
+
+      case "CHECK_TURN":
+        timeoutId = setTimeout(() => {
+          dispatch({ type: actionTypes.SET_TURN_CARD_STATE, payload: true });
+          dispatch({ type: actionTypes.DEAL_RIVER });
+        }, 500);
         break;
 
       default:

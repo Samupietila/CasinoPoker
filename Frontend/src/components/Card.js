@@ -1,27 +1,11 @@
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useLayoutEffect,
-} from "react";
+import React, { useEffect, useRef } from "react";
 import CardFaceDown from "./CardFaceDown";
-import { DeckRefContext } from "./Deck";
 
 const Card = (props) => {
-  const { suit, value, isFaceUp, className } = props;
+  const { suit, value, isFaceUp } = props;
   const isRed = suit === "♥" || suit === "♦";
   const cardValueRef = useRef(null);
   const cardSuitRef = useRef(null);
-  const deckRef = useContext(DeckRefContext);
-  const [deckPosition, setDeckPosition] = useState({ left: 0, top: 0 });
-
-  useLayoutEffect(() => {
-    if (deckRef.current) {
-      const rect = deckRef.current.getBoundingClientRect();
-      setDeckPosition({ left: rect.left, top: rect.top });
-    }
-  }, [deckRef]);
 
   useEffect(() => {
     const resizeFont = () => {
@@ -48,13 +32,7 @@ const Card = (props) => {
   }, [isFaceUp]);
 
   return (
-    <div
-      className={`card-flip ${isFaceUp ? "flipped" : ""} ${className}`}
-      style={{
-        "--animation-from-x": `${deckPosition.left}px`,
-        "--animation-from-y": `${deckPosition.top}px`,
-      }}
-    >
+    <div className={`card-flip ${isFaceUp ? "flipped" : ""}`}>
       <div>
         <div className="back">
           <CardFaceDown />

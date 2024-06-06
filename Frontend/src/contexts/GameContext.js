@@ -16,7 +16,8 @@ export const actionTypes = {
   DEAL_RIVER: "DEAL_RIVER",
   CHECK_WINNER: "CHECK_WINNER",
   FOLD: "FOLD",
-  CHECK: "CHECK",
+  CHECK_FLOP: "CHECK_FLOP",
+  CHECK_TURN: "CHECK_TURN",
   UPDATE_FUNDS: "UPDATE_FUNDS",
   RESET_GAME: "RESET_GAME",
   NEW_GAME: "NEW_GAME",
@@ -51,6 +52,7 @@ export const initialState = {
   firstButtonViewState: true,
   secondButtonViewState: true,
   thirdButtonViewState: true,
+  checkState: false,
 
   // cards for the game
   playerHand: [],
@@ -129,6 +131,7 @@ export const gameReducer = (state, action) => {
       Deck.shuffleDeck(deckDeal);
       const playerHand = Deck.dealHand(deckDeal, 2);
       const dealerHand = Deck.dealHand(deckDeal, 2);
+      console.log("playerHand: ", playerHand);
       const potValue = state.betValue;
       const bonusWinnings = isBonusBetWin(playerHand);
       const updatedFunds = state.funds + bonusWinnings - state.bonusBet;
@@ -145,7 +148,6 @@ export const gameReducer = (state, action) => {
         firstButtonNextState: actionTypes.DEAL_FLOP,
         secondButtonNextState: actionTypes.FOLD,
         secondButtonViewState: true,
-        thirdButtonNextState: actionTypes.FOLD,
         thirdButtonViewState: false,
         currentState: "STARTED",
       };
@@ -154,7 +156,6 @@ export const gameReducer = (state, action) => {
     case actionTypes.DEAL_FLOP:
       const deckFlop = state.deck;
       const flopCards = Deck.dealFlop(deckFlop);
-
       const potValueFlop = state.potValue + state.originalBet * 2;
       return {
         ...state,
@@ -164,7 +165,7 @@ export const gameReducer = (state, action) => {
         firstButton: "Raise (1x bet)",
         firstButtonNextState: actionTypes.DEAL_TURN,
         thirdButton: "Check",
-        thirdButtonNextState: actionTypes.CHECK,
+        thirdButtonNextState: actionTypes.CHECK_FLOP,
         thirdButtonViewState: true,
         currentState: "FLOP",
       };
@@ -173,14 +174,22 @@ export const gameReducer = (state, action) => {
     case actionTypes.DEAL_TURN:
       const deckTurn = state.deck;
       const turnCard = Deck.dealTurn(deckTurn);
-
       const potValueTurn = state.potValue + state.originalBet;
+      if (state.checkState === true) {
+        return {
+          ...state,
+          turnCard: turnCard,
+
+          currentState: "CHECK_TURN",
+        };
+      }
       return {
         ...state,
         deck: deckTurn,
         turnCard: turnCard,
         potValue: potValueTurn,
         firstButtonNextState: actionTypes.DEAL_RIVER,
+        thirdButtonNextState: actionTypes.CHECK_TURN,
         currentState: "TURN",
       };
 
@@ -201,6 +210,7 @@ export const gameReducer = (state, action) => {
         currentState: "RIVER",
         thirdButtonViewState: false,
         firstButtonNextState: actionTypes.CHECK_WINNER,
+        checkState: false,
       };
 
     // CHECKING THE WINNER
@@ -235,6 +245,8 @@ export const gameReducer = (state, action) => {
           secondButton: "SameBet",
           firstButtonNextState: actionTypes.NEW_GAME,
           secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+          firstButtonViewState: true,
+          secondButtonViewState: true,
         };
       }
       if (state.winner === 0) {
@@ -246,6 +258,8 @@ export const gameReducer = (state, action) => {
           secondButton: "SameBet",
           firstButtonNextState: actionTypes.NEW_GAME,
           secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+          firstButtonViewState: true,
+          secondButtonViewState: true,
         };
       }
       return {
@@ -256,6 +270,8 @@ export const gameReducer = (state, action) => {
         secondButton: "SameBet",
         firstButtonNextState: actionTypes.NEW_GAME,
         secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+        firstButtonViewState: true,
+        secondButtonViewState: true,
       };
 
     // New Game
@@ -309,45 +325,6 @@ export const gameReducer = (state, action) => {
         winner: "",
       };
 
-    // CHECKING
-    case actionTypes.CHECK:
-      switch (state.firstButtonNextState) {
-        case actionTypes.DEAL_FLOP:
-          return {
-            ...state,
-            currentState: "STARTED",
-          };
-        case actionTypes.DEAL_TURN:
-          const deckTurn = state.deck;
-          const turnCard = Deck.dealTurn(deckTurn);
-          return {
-            ...state,
-            deck: deckTurn,
-            turnCard: turnCard,
-            firstButton: "CHECKED",
-            firstButtonNextState: actionTypes.DEAL_RIVER,
-            currentState: "CHECK",
-          };
-        case actionTypes.DEAL_RIVER:
-          console.log("CHECKING RIVER");
-          const deckRiver = state.deck;
-          const riverCard = Deck.dealRiver(deckRiver);
-          return {
-            ...state,
-            deck: deckRiver,
-            riverCard: riverCard,
-            firstButton: "CHECKED",
-            dealerHandState: true,
-            firstButtonNextState: actionTypes.CHECK_WINNER,
-            currentState: "RIVER",
-          };
-        default:
-          return {
-            ...state,
-            currentState: "CHECK",
-          };
-      }
-
     // FOLDING
     case actionTypes.FOLD:
       return {
@@ -356,6 +333,30 @@ export const gameReducer = (state, action) => {
         currentState: "FOLD",
       };
 
+    // CHECKING
+    case actionTypes.CHECK_FLOP:
+      return {
+        ...state,
+        checkState: true,
+        currentState: "CHECK_FLOP",
+        firstButtonViewState: false,
+        thirdButtonViewState: false,
+        secondButtonViewState: false,
+        potValue: state.potValue - state.originalBet,
+      };
+
+    case actionTypes.CHECK_TURN:
+      return {
+        ...state,
+        checkState: true,
+        currentState: "CHECK_TURN",
+        firstButtonViewState: false,
+        thirdButtonViewState: false,
+        secondButtonViewState: false,
+        potValue: state.potValue - state.originalBet,
+      };
+
+    // TURNING CARDS
     case actionTypes.SET_PLAYER_HAND_STATE:
       return {
         ...state,

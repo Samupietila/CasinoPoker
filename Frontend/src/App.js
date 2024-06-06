@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useReducer, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useReducer,
+  useRef,
+  useEffect,
+} from "react";
 import "./App.css";
 import "./styles/styles.css";
 import { GameContext, gameReducer, initialState } from "./contexts/GameContext";
@@ -17,7 +23,6 @@ function App() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const memoizedDispatch = useCallback(dispatch, []);
   const [showPopup, setShowPopup] = useState(false);
-  const deckRef = useRef(null);
 
   const handleClick = () => {
     setShowPopup(!showPopup);
@@ -25,46 +30,42 @@ function App() {
 
   return (
     <GameContext.Provider value={{ state, dispatch: memoizedDispatch }}>
-      <DeckRefContext.Provider value={deckRef}>
-        {" "}
-        {/* provide the ref here */}
-        <Game />
-        <div className="App">
-          <Navbar />
-          <div className="main-container">
-            <div className="game-container">
-              <DealerHand />
-              <Table />
-              <PlayerHand />
-              <InfoPopUp trigger={showPopup} setTrigger={setShowPopup} />
+      <Game />
+      <div className="App">
+        <Navbar />
+        <div className="main-container">
+          <div className="game-container">
+            <DealerHand />
+            <Table />
+            <PlayerHand />
+            <InfoPopUp trigger={showPopup} setTrigger={setShowPopup} />
+          </div>
+          <div className="control-container">
+            <Deck />
+            <InfoButton onClick={handleClick} />
+            <Player />
+            <div className="buttons-container">
+              <ControlButton
+                text={state.firstButton}
+                actionType={state.firstButtonNextState}
+                state={state.firstButtonViewState}
+              />
+              <ControlButton
+                text={state.secondButton}
+                actionType={state.secondButtonNextState}
+                state={state.secondButtonViewState}
+              />
             </div>
-            <div className="control-container">
-              <Deck ref={deckRef} /> {/* pass the ref to Deck */}
-              <InfoButton onClick={handleClick} />
-              <Player />
-              <div className="buttons-container">
-                <ControlButton
-                  text={state.firstButton}
-                  actionType={state.firstButtonNextState}
-                  state={state.firstButtonViewState}
-                />
-                <ControlButton
-                  text={state.secondButton}
-                  actionType={state.secondButtonNextState}
-                  state={state.secondButtonViewState}
-                />
-              </div>
-              <div className="buttons-container">
-                <ControlButton
-                  text={state.thirdButton}
-                  actionType={state.thirdButtonNextState}
-                  state={state.thirdButtonViewState}
-                />
-              </div>
+            <div className="buttons-container">
+              <ControlButton
+                text={state.thirdButton}
+                actionType={state.thirdButtonNextState}
+                state={state.thirdButtonViewState}
+              />
             </div>
           </div>
         </div>
-      </DeckRefContext.Provider>
+      </div>
     </GameContext.Provider>
   );
 }
