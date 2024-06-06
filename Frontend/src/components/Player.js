@@ -1,13 +1,15 @@
 import React, { useContext } from "react";
 import { GameContext } from "../contexts/GameContext";
+import { useDebounce } from "use-debounce";
 
 const Player = () => {
   const { state } = useContext(GameContext);
+  const [debouncePotValue] = useDebounce(state.potValue, 1000);
   return (
     <div className="info-container">
       <div className="info">
         <span className="info-label">Pot:</span>
-        <span className="info-value">{state.potValue} $</span>
+        <span className="info-value">{debouncePotValue} $</span>
       </div>
       <div className="info">
         <span className="info-label">Current Bet:</span>

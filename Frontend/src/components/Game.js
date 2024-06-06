@@ -75,9 +75,9 @@ function Game() {
         break;
 
       case "CHECK_FLOP":
+        dispatch({ type: actionTypes.DEAL_TURN });
         timeoutId = setTimeout(() => {
           dispatch({ type: actionTypes.SET_FLOP_CARDS_STATE, payload: true });
-          dispatch({ type: actionTypes.DEAL_TURN });
         }, 500);
         break;
 
