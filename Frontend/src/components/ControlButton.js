@@ -9,10 +9,6 @@ function ControlButton({ text, actionType, state }) {
     event.stopPropagation();
   };
 
-  useEffect(() => {
-    console.log("Control Button Rendered");
-  }, []);
-
   return (
     <>
       {state ? (

@@ -232,7 +232,6 @@ export const gameReducer = (state, action) => {
 
     // DEALING THE RIVER
     case actionTypes.DEAL_RIVER:
-      console.log("DEALING RIVER");
       const deckRiver = state.deck;
       const riverCard = Deck.dealRiver(deckRiver);
 
@@ -278,7 +277,6 @@ export const gameReducer = (state, action) => {
         const log = `Player wins ${state.potValue}$  with ${getPrintByHandRank(
           phr
         )}. Players funds are now ${state.funds + state.potValue}$`;
-        console.log(state.playerHand);
         return {
           ...state,
           winnerPrint: log,
