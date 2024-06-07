@@ -1,32 +1,42 @@
-import React, {
-  useState,
-  useCallback,
-  useReducer,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, useReducer, useEffect } from "react";
 import "./App.css";
 import "./styles/styles.css";
 import { GameContext, gameReducer, initialState } from "./contexts/GameContext";
 import Navbar from "./components/Navbar";
 import ControlButton from "./components/ControlButton.js";
 import Deck from "./components/Deck.js";
-import Player from "./components/Player.js";
+import { Player, PlayerPopUp } from "./components/Player.js";
 import PlayerHand from "./components/PlayerHand.js";
 import DealerHand from "./components/DealerHand.js";
 import Table from "./components/Table.js";
 import { InfoPopUp, InfoButton } from "./components/InfoButton.js";
 import Game from "./components/Game.js";
-import { DeckRefContext } from "./components/Deck";
 
 function App() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const memoizedDispatch = useCallback(dispatch, []);
   const [showPopup, setShowPopup] = useState(false);
+  const [showLogger, setShowLogger] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [clickCount, setClickCount] = useState(0);
 
   const handleClick = () => {
     setShowPopup(!showPopup);
   };
+
+  const updateLogs = (newLog, state) => {
+    if (state) {
+      const log = `${newLog}: ${JSON.stringify(state.winnerPrint)}`;
+      setLogs((prevLogs) => [...prevLogs, log]);
+    }
+  };
+
+  useEffect(() => {
+    if (state.winnerPrint) {
+      setClickCount((prevCount) => prevCount + 1);
+      updateLogs(`LOG ${clickCount}`, state);
+    }
+  }, [state.winnerPrint]);
 
   return (
     <GameContext.Provider value={{ state, dispatch: memoizedDispatch }}>
@@ -39,11 +49,20 @@ function App() {
             <Table />
             <PlayerHand />
             <InfoPopUp trigger={showPopup} setTrigger={setShowPopup} />
+            <PlayerPopUp
+              trigger={showLogger}
+              setTrigger={setShowLogger}
+              logs={logs}
+            />
           </div>
           <div className="control-container">
             <Deck />
             <InfoButton onClick={handleClick} />
-            <Player />
+            <Player
+              onClick={() => {
+                setShowLogger(!showLogger);
+              }}
+            />
             <div className="buttons-container">
               <ControlButton
                 text={state.firstButton}

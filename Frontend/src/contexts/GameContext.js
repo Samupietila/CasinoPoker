@@ -1,6 +1,11 @@
 import React from "react";
 import * as Deck from "../utils/deck";
-import { evaluateWinner, isBonusBetWin } from "../utils/evaluateWinner";
+import {
+  evaluateWinner,
+  isBonusBetWin,
+  getPrintByHandRank,
+  getBestHand,
+} from "../utils/evaluateWinner";
 
 // initial variables for the game
 const minBet = 4;
@@ -69,6 +74,7 @@ export const initialState = {
 
   // winner of the game
   winner: "",
+  winnerPrint: "",
 };
 
 const getMaxBet = (funds) => {
@@ -124,11 +130,8 @@ export const gameReducer = (state, action) => {
       const playerHand = Deck.dealHand(deckDeal, 2);
       const dealerHand = Deck.dealHand(deckDeal, 2);
       const potValue = state.betValue;
-      const bonusWinnings = isBonusBetWin(playerHand);
-      const updatedFunds = state.funds + bonusWinnings - state.bonusBet;
       return {
         ...state,
-        funds: updatedFunds,
         deck: deckDeal,
         potValue: potValue,
         firstButton: "Flop",
@@ -144,14 +147,28 @@ export const gameReducer = (state, action) => {
 
     // DEALING THE FLOP
     case actionTypes.DEAL_FLOP:
+      let flopLog = "";
       const deckFlop = state.deck;
       const flopCards = Deck.dealFlop(deckFlop);
       const potValueFlop = state.potValue + state.originalBet * 2;
-      console.log("POT VALUE FLOP: ", potValueFlop + state.originalBet);
-      console.log("FUNDS" + state.funds);
-      if (state.funds < potValueFlop + state.originalBet) {
+      const bonusWinnings = isBonusBetWin(state.playerHand);
+      const updatedFunds =
+        state.funds + bonusWinnings * state.bonusBet - state.bonusBet;
+
+      if (bonusWinnings > 0) {
+        flopLog = `Player wins ${
+          bonusWinnings * state.bonusBet
+        }$ with bonus bet. Players funds are now ${updatedFunds}$`;
+      } else if (state.bonusBet === 0) {
+        flopLog = `Bonus bet not played`;
+      } else {
+        flopLog = `Player loses ${state.bonusBet}$. Players funds are now ${updatedFunds}$`;
+      }
+      if (updatedFunds < potValueFlop + state.originalBet) {
         return {
           ...state,
+          winnerPrint: flopLog,
+          funds: updatedFunds,
           deck: deckFlop,
           potValue: potValueFlop,
           flopCards: flopCards,
@@ -165,6 +182,8 @@ export const gameReducer = (state, action) => {
       }
       return {
         ...state,
+        winnerPrint: flopLog,
+        funds: updatedFunds,
         deck: deckFlop,
         potValue: potValueFlop,
         flopCards: flopCards,
@@ -241,7 +260,6 @@ export const gameReducer = (state, action) => {
         state.riverCard
       );
       const winner = evaluateWinner(endPlayerHand, endDealerHand, tableCards);
-      console.log("WINNER: ", winner);
       return {
         ...state,
         playerHand: endPlayerHand,
@@ -250,13 +268,20 @@ export const gameReducer = (state, action) => {
         winner: winner,
         firstButtonViewState: false,
         currentState: "WINNER",
+        tableCards: tableCards,
       };
 
     // UDPATING FUNDS
     case actionTypes.UPDATE_FUNDS:
       if (state.winner === 1) {
+        const phr = getBestHand(state.playerHand, state.tableCards).rank;
+        const log = `Player wins ${state.potValue}$  with ${getPrintByHandRank(
+          phr
+        )}. Players funds are now ${state.funds + state.potValue}$`;
+        console.log(state.playerHand);
         return {
           ...state,
+          winnerPrint: log,
           funds: state.funds + state.potValue,
           potValue: 0,
           firstButton: "NewBet",
@@ -266,10 +291,14 @@ export const gameReducer = (state, action) => {
           firstButtonViewState: true,
           secondButtonViewState: true,
         };
-      }
-      if (state.winner === 0) {
+      } else if (state.winner === 0) {
+        const dhr = getBestHand(state.dealerHand, state.tableCards).rank;
+        const log = `Its a tie! Both players have ${getPrintByHandRank(
+          dhr
+        )}. Players funds are now ${state.funds}$`;
         return {
           ...state,
+          winnerPrint: log,
           funds: state.funds,
           potValue: 0,
           firstButton: "NewBet",
@@ -279,9 +308,30 @@ export const gameReducer = (state, action) => {
           firstButtonViewState: true,
           secondButtonViewState: true,
         };
+      } else if (state.winner === 3) {
+        const log = `Player folded and lost ${
+          state.potValue + state.bonusBet
+        }$. Players funds are now ${state.funds - state.potValue}$`;
+        return {
+          ...state,
+          winnerPrint: log,
+          funds: state.funds - state.potValue,
+          potValue: 0,
+          firstButton: "NewBet",
+          secondButton: "SameBet",
+          firstButtonNextState: actionTypes.NEW_GAME,
+          secondButtonNextState: actionTypes.NEW_GAME_SAME_BET,
+          firstButtonViewState: true,
+          secondButtonViewState: true,
+        };
       }
+      const dhr = getBestHand(state.dealerHand, state.tableCards).rank;
+      const log = `Dealer wins with ${getPrintByHandRank(dhr)}. Player loses ${
+        state.potValue
+      }$. Players funds are now ${state.funds - state.potValue}$`;
       return {
         ...state,
+        winnerPrint: log,
         funds: state.funds - state.potValue,
         potValue: 0,
         firstButton: "NewBet",
@@ -296,6 +346,7 @@ export const gameReducer = (state, action) => {
     case actionTypes.NEW_GAME:
       return {
         ...state,
+        winnerPrint: "",
         deck: [],
         funds: state.funds,
         maxBet: getMaxBet(state.funds),
@@ -303,9 +354,9 @@ export const gameReducer = (state, action) => {
         potValue: 0,
         betValue: minBet,
         bonusBet: 0,
-        firstButton: "Start Game",
+        firstButton: "Start",
         secondButton: "Bet",
-        thirdButton: "Bonus Bet",
+        thirdButton: "Bonus",
         currentState: "NOT_STARTED",
         firstButtonNextState: actionTypes.DEAL_CARDS,
         secondButtonNextState: actionTypes.PLACE_BET,
@@ -325,12 +376,13 @@ export const gameReducer = (state, action) => {
     case actionTypes.NEW_GAME_SAME_BET:
       return {
         ...state,
+        winnerPrint: "",
         funds: state.funds,
         maxBet: getMaxBet(state.funds),
         originalBet: state.betValue,
         potValue: state.betValue,
         betValue: state.betValue,
-        firstButton: "Flop (2x bet)",
+        firstButton: "Flop",
         secondButton: "Fold",
         currentState: "NEW_GAME_SAME_BET",
         playerHand: [],
@@ -345,9 +397,12 @@ export const gameReducer = (state, action) => {
 
     // FOLDING
     case actionTypes.FOLD:
+      const extractBonusFunds = state.funds - state.bonusBet;
       return {
         ...state,
-        winner: "",
+        funds: extractBonusFunds,
+        winner: 3,
+        winnerPrint: "Player folded",
         currentState: "FOLD",
       };
 

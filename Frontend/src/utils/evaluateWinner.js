@@ -208,7 +208,7 @@ function getHandRank(hand) {
 }
 
 //get the print of the hand
-function getPrintByHandRank(handRank) {
+export function getPrintByHandRank(handRank) {
   switch (handRank) {
     case 9:
       return "Straight Flush";
@@ -228,12 +228,16 @@ function getPrintByHandRank(handRank) {
       return "Pair";
     case 1:
       return "High Card";
+    case 0:
+      return "Fold";
   }
 }
 
 // get the best hand from the hand and the table cards
 function getBestHand(hand, tableCards) {
-  console.log("getbesthand" + hand, tableCards);
+  if (hand === null || tableCards === null) {
+    return null;
+  }
   const allCards = hand.concat(tableCards);
   const allCombinations = getCombinations(allCards, 5);
   let bestHand = null;
@@ -328,9 +332,10 @@ function getBestHand(hand, tableCards) {
         case 1:
           if (currentHandRankInfo.highCard > bestHand.highCard) {
             bestHand = currentHandRankInfo;
-            console.log("bestHandwith HIGH CARD" + bestHand);
           }
           break;
+        case null:
+          bestHand = 0;
       }
     }
   }
@@ -342,9 +347,6 @@ function getBestHand(hand, tableCards) {
 function evaluateWinner(hand1, hand2, tableCards) {
   const bestHand1 = getBestHand(hand1, tableCards);
   const bestHand2 = getBestHand(hand2, tableCards);
-  console.log("bestHand1", bestHand1);
-  console.log("bestHand2", bestHand2);
-  console.log(hand1, hand2, tableCards);
   if (bestHand1.rank > bestHand2.rank) {
     return 1;
   } else if (bestHand1.rank < bestHand2.rank) {
@@ -481,4 +483,4 @@ function evaluateWinner(hand1, hand2, tableCards) {
     }
   }
 }
-export { evaluateWinner };
+export { evaluateWinner, getBestHand };

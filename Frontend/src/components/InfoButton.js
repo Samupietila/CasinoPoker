@@ -9,51 +9,56 @@ const InfoButton = ({ onClick }) => {
 };
 
 const InfoPopUp = ({ trigger, setTrigger }) => {
-  return trigger ? (
-    <div className="popup">
-      <div className="popup-inner">
-        <p>
-          CasinoPoker is a game where the player aims to beat the dealer's hand
-          by forming the best possible five-card poker hand using two personal
-          cards and five community cards. In addition to the basic game,
-          CasinoPoker can include a bonus game.
-        </p>
-        <p>
-          Playing Cards and Their Values: The game uses a single 52-card deck
-          without jokers. The ace is valued at 14. The face cards are valued as
-          follows: king 13, queen 12, and jack 11. Other cards (2–10) have their
-          face value. The deck is shuffled before each new deal.
-        </p>
-        <p>
-          Game Flow: When the players have placed their initial bet (Current
-          bet) and any optional side bets (Bonus bet), the dealer deals two
-          cards face down to the player and themselves. After looking at the
-          cards, the player must decide whether to continue playing or fold. If
-          the player folds, they lose their initial bet and any bonus bet. If
-          the player decides to continue playing, they must pay a continuation
-          bet equal to twice the blind bet. Once the players have made their
-          decisions, the dealer reveals three community cards (the flop). At
-          this point, the player can either continue with the same bet (Check)
-          or raise by placing a bet equal to the blind bet (Raise). After any
-          raise decisions, the dealer reveals the fourth community card (the
-          turn). Players can once again raise their bet or continue with the
-          same bet. The raise bet (river) is equal to the blind bet. If the
-          player has not placed the previous raise bet, they cannot raise at
-          this stage. After the player has made their decision, the dealer
-          reveals the fifth community card (the river). With all community cards
-          revealed, the dealer shows their pocket cards and forms the best
-          possible five-card poker hand using two personal cards and five
-          community cards. The dealer plays this hand against the player.
-        </p>
-        <p>
-          Payout: If the player has a better poker hand than the dealer, they
-          are paid 1:1 on each continuation bet (flop, turn, river). If the
-          dealer's hand is better, the player loses their bets. If the hands are
-          of equal value, the game is a tie and the bets are returned to the
-          player.
-        </p>
-        <p>
-          Side Games:
+  return (
+    <>
+      <div
+        className={`backdrop ${trigger ? "show" : ""}`}
+        onClick={() => setTrigger(false)}
+      ></div>
+      <div className={`popup ${trigger ? "show" : ""}`}>
+        <div className="popup-inner">
+          <p>
+            CasinoPoker is a game where the player aims to beat the dealer's
+            hand by forming the best possible five-card poker hand using two
+            personal cards and five community cards. In addition to the basic
+            game, CasinoPoker can include a bonus game.
+          </p>
+          <p>
+            Playing Cards and Their Values: The game uses a single 52-card deck
+            without jokers. The ace is valued at 14. The face cards are valued
+            as follows: king 13, queen 12, and jack 11. Other cards (2–10) have
+            their face value. The deck is shuffled before each new deal.
+          </p>
+          <p>
+            Game Flow: When the players have placed their initial bet (Current
+            bet) and any optional side bets (Bonus bet), the dealer deals two
+            cards face down to the player and themselves. After looking at the
+            cards, the player must decide whether to continue playing or fold.
+            If the player folds, they lose their initial bet and any bonus bet.
+            If the player decides to continue playing, they must pay a
+            continuation bet equal to twice the blind bet. Once the players have
+            made their decisions, the dealer reveals three community cards (the
+            flop). At this point, the player can either continue with the same
+            bet (Check) or raise by placing a bet equal to the blind bet
+            (Raise). After any raise decisions, the dealer reveals the fourth
+            community card (the turn). Players can once again raise their bet or
+            continue with the same bet. The raise bet (river) is equal to the
+            blind bet. If the player has not placed the previous raise bet, they
+            cannot raise at this stage. After the player has made their
+            decision, the dealer reveals the fifth community card (the river).
+            With all community cards revealed, the dealer shows their pocket
+            cards and forms the best possible five-card poker hand using two
+            personal cards and five community cards. The dealer plays this hand
+            against the player.
+          </p>
+          <p>
+            Payout: If the player has a better poker hand than the dealer, they
+            are paid 1:1 on each continuation bet (flop, turn, river). If the
+            dealer's hand is better, the player loses their bets. If the hands
+            are of equal value, the game is a tie and the bets are returned to
+            the player.
+          </p>
+          <p>Side Games:</p>
           <ul>
             <li>
               Bonus: In addition to the basic CasinoPoker game, the player can
@@ -73,9 +78,7 @@ const InfoPopUp = ({ trigger, setTrigger }) => {
             </li>
             <li>Extra Bonus: Coming soon!</li>
           </ul>
-        </p>
-        <p>
-          Hand Rankings (Lowest to Highest):
+          <p>Hand Rankings (Lowest to Highest):</p>
           <ul>
             <li>
               High card: If the highest card is the same, the next highest card
@@ -109,15 +112,18 @@ const InfoPopUp = ({ trigger, setTrigger }) => {
             </li>
             <li>Straight flush: The higher five-card straight flush wins.</li>
           </ul>
-          If the player and dealer have hands of exactly the same value, the
-          game is a tie. Suits do not have a ranking order.
-        </p>
-        <div className="button-container" onClick={() => setTrigger(false)}>
-          <div className="button-text">Close</div>
+
+          <p>
+            If the player and dealer have hands of exactly the same value, the
+            game is a tie. Suits do not have a ranking order.
+          </p>
+          <div className="button-container" onClick={() => setTrigger(false)}>
+            <div className="button-text">Close</div>
+          </div>
         </div>
       </div>
-    </div>
-  ) : null;
+    </>
+  );
 };
 
 export { InfoPopUp, InfoButton };
