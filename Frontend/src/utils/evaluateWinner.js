@@ -37,6 +37,24 @@ export function isBonusBetWin(hand) {
   return 0;
 }
 
+// check if the bonus bet 2 wins
+export function isBonusBet2Win(hand, tableCards) {
+  const bestHand = getBestHand(hand, tableCards);
+  switch (bestHand.rank) {
+    case 9:
+      return 100;
+    case 8:
+      return 50;
+    case 7:
+      return 10;
+    case 6:
+      return 7;
+    case 5:
+      return 4;
+  }
+  return 0;
+}
+
 // check if the hand is a straight flush
 function isStraightFlush(hand) {
   const sortedHand = hand.sort((a, b) => a.value - b.value);
@@ -51,6 +69,23 @@ function isStraightFlush(hand) {
     return card.value === sortedHand[index - 1].value + 1;
   });
   return isStraight;
+}
+
+// check if the hand is a straight flush with ace low
+function isStraightFlushAceLow(hand) {
+  const sortedHand = hand.sort((a, b) => a.value - b.value);
+  const isFlush = hand.every((card) => card.suitText === hand[0].suitText);
+  if (!isFlush) {
+    return false;
+  }
+  const isAceLowStraight = sortedHand.every((card, index) => {
+    if (index === sortedHand.length - 1) {
+      return card.value === 14;
+    } else {
+      return card.value === index + 2;
+    }
+  });
+  return isAceLowStraight;
 }
 
 // check if the hand is a quads
@@ -98,6 +133,18 @@ function isStraight(hand) {
     }
     return card.value === sortedHand[index - 1].value + 1;
   });
+}
+// check if the hand is a straight with ace low
+function isStraightAceLow(hand) {
+  const sortedHand = hand.sort((a, b) => a.value - b.value);
+  const isAceLowStraight = sortedHand.every((card, index) => {
+    if (index === sortedHand.length - 1) {
+      return card.value === 14;
+    } else {
+      return card.value === index + 2;
+    }
+  });
+  return isAceLowStraight;
 }
 
 //check if the hand is a trips
@@ -151,6 +198,8 @@ function isHighCard(hand) {
 function getHandRank(hand) {
   if (isStraightFlush(hand)) {
     return { rank: 9, highCard: isHighCard(hand) };
+  } else if (isStraightFlushAceLow(hand)) {
+    return { rank: 9, highCard: 5 };
   } else if (isQuads(hand)) {
     const quadsValue = isQuads(hand);
     return {
@@ -166,9 +215,16 @@ function getHandRank(hand) {
       pair: pairValue,
     };
   } else if (isFlush(hand)) {
-    return { rank: 6, highCard: isHighCard(hand) };
+    const highCard = isHighCard(hand);
+    const kickers = hand
+      .filter((card) => card.value !== highCard)
+      .map((card) => card.value)
+      .sort((a, b) => b - a);
+    return { rank: 6, kickers };
   } else if (isStraight(hand)) {
     return { rank: 5, highCard: isHighCard(hand) };
+  } else if (isStraightAceLow(hand)) {
+    return { rank: 5, highCard: 5 };
   } else if (isTrips(hand)) {
     const tripsValue = isTrips(hand);
     return {
@@ -273,8 +329,13 @@ function getBestHand(hand, tableCards) {
           }
           break;
         case 6:
-          if (currentHandRankInfo.highCard > bestHand.highCard) {
-            bestHand = currentHandRankInfo;
+          for (let i = 0; i < 5; i++) {
+            if (currentHandRankInfo.kickers[i] > bestHand.kickers[i]) {
+              bestHand = currentHandRankInfo;
+              break;
+            } else if (currentHandRankInfo.kickers[i] < bestHand.kickers[i]) {
+              break;
+            }
           }
           break;
         case 5:
@@ -330,8 +391,13 @@ function getBestHand(hand, tableCards) {
           }
           break;
         case 1:
-          if (currentHandRankInfo.highCard > bestHand.highCard) {
-            bestHand = currentHandRankInfo;
+          for (let i = 0; i < 5; i++) {
+            if (currentHandRankInfo.kickers[i] > bestHand.kickers[i]) {
+              bestHand = currentHandRankInfo;
+              break;
+            } else if (currentHandRankInfo.kickers[i] < bestHand.kickers[i]) {
+              break;
+            }
           }
           break;
         case null:
@@ -390,13 +456,14 @@ function evaluateWinner(hand1, hand2, tableCards) {
           }
         }
       case 6:
-        if (bestHand1.highCard > bestHand2.highCard) {
-          return 1;
-        } else if (bestHand1.highCard < bestHand2.highCard) {
-          return 2;
-        } else {
-          return 0;
+        for (let i = 0; i < bestHand1.kickers.length; i++) {
+          if (bestHand1.kickers[i] > bestHand2.kickers[i]) {
+            return 1;
+          } else if (bestHand1.kickers[i] < bestHand2.kickers[i]) {
+            return 2;
+          }
         }
+        return 0;
       case 5:
         if (bestHand1.highCard > bestHand2.highCard) {
           return 1;

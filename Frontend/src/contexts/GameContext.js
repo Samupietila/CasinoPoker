@@ -3,6 +3,7 @@ import * as Deck from "../utils/deck";
 import {
   evaluateWinner,
   isBonusBetWin,
+  isBonusBet2Win,
   getPrintByHandRank,
   getBestHand,
 } from "../utils/evaluateWinner";
@@ -15,19 +16,24 @@ export const actionTypes = {
   START_GAME: "START_GAME",
   PLACE_BET: "PLACE_BET",
   PLACE_BONUS_BET: "PLACE_BONUS_BET",
+  PLACE_BONUS_BET2: "PLACE_BONUS_BET2",
+
   DEAL_CARDS: "DEAL_CARDS",
   DEAL_FLOP: "DEAL_FLOP",
   DEAL_TURN: "DEAL_TURN",
   DEAL_RIVER: "DEAL_RIVER",
+
   CHECK_WINNER: "CHECK_WINNER",
   FOLD: "FOLD",
+
   CHECK_FLOP: "CHECK_FLOP",
   CHECK_TURN: "CHECK_TURN",
+
   UPDATE_FUNDS: "UPDATE_FUNDS",
   RESET_GAME: "RESET_GAME",
   NEW_GAME: "NEW_GAME",
   NEW_GAME_SAME_BET: "NEW_GAME_SAME_BET",
-  INVALID_BET: "INVALID_BET",
+
   SET_PLAYER_HAND_STATE: "SET_PLAYER_HAND_STATE",
   SET_DEALER_HAND_STATE: "SET_DEALER_HAND_STATE",
   SET_FLOP_CARDS_STATE: "SET_FLOP_CARDS_STATE",
@@ -43,6 +49,7 @@ export const initialState = {
   maxBet: 0,
   originalBet: minBet,
   bonusBet: 0,
+  bonusBet2: 0,
   potValue: 0,
   betValue: minBet,
 
@@ -54,9 +61,11 @@ export const initialState = {
   firstButtonNextState: actionTypes.DEAL_CARDS,
   secondButtonNextState: actionTypes.PLACE_BET,
   thirdButtonNextState: actionTypes.PLACE_BONUS_BET,
+  fourthButtonNextState: actionTypes.PLACE_BONUS_BET2,
   firstButtonViewState: true,
   secondButtonViewState: true,
   thirdButtonViewState: true,
+  fourthButtonViewState: true,
   checkState: false,
 
   // cards for the game
@@ -78,14 +87,23 @@ export const initialState = {
 };
 
 const getMaxBet = (funds) => {
-  const thirdOfFunds = funds / 5;
+  const fifthOfFunds = funds / 5;
   let maxBet = minBet;
-  while (maxBet + minBet <= thirdOfFunds && maxBet + minBet <= 20) {
+  while (maxBet + minBet <= fifthOfFunds && maxBet + minBet <= 20) {
     maxBet += minBet;
   }
   return maxBet;
 };
+
 const getMaxBonusBet = (funds, betValue) => {
+  const bonusBet = funds - betValue;
+  if (bonusBet > 5) {
+    return 5;
+  }
+  return bonusBet;
+};
+
+const getMaxBonusBet2 = (funds, betValue) => {
   const bonusBet = funds - betValue;
   if (bonusBet > 5) {
     return 5;
@@ -258,6 +276,7 @@ export const gameReducer = (state, action) => {
         state.turnCard,
         state.riverCard
       );
+      const bonusWinnings2 = isBonusBet2Win(endPlayerHand, tableCards);
       const winner = evaluateWinner(endPlayerHand, endDealerHand, tableCards);
       return {
         ...state,
@@ -400,7 +419,6 @@ export const gameReducer = (state, action) => {
         ...state,
         funds: extractBonusFunds,
         winner: 3,
-        winnerPrint: "Player folded",
         currentState: "FOLD",
       };
 
