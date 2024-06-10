@@ -424,6 +424,8 @@ export const gameReducer = (state, action) => {
         firstButton: "Start",
         secondButton: "Bet",
         thirdButton: "Bonus",
+        fourthButton: "ExtraBonus",
+        fifthButton: "Reset",
         currentState: "NOT_STARTED",
         firstButtonNextState: actionTypes.DEAL_CARDS,
         secondButtonNextState: actionTypes.PLACE_BET,
