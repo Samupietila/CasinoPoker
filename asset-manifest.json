@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/CasinoPoker/static/css/main.6ffd44e8.css",
-    "main.js": "/CasinoPoker/static/js/main.af2833d9.js",
+    "main.css": "/CasinoPoker/static/css/main.4919bf01.css",
+    "main.js": "/CasinoPoker/static/js/main.9aac0c80.js",
     "static/js/453.a9d50702.chunk.js": "/CasinoPoker/static/js/453.a9d50702.chunk.js",
     "static/media/cardFaceDown.png": "/CasinoPoker/static/media/cardFaceDown.b2113f64a377d0a83c83.png",
     "index.html": "/CasinoPoker/index.html",
-    "main.6ffd44e8.css.map": "/CasinoPoker/static/css/main.6ffd44e8.css.map",
-    "main.af2833d9.js.map": "/CasinoPoker/static/js/main.af2833d9.js.map",
+    "main.4919bf01.css.map": "/CasinoPoker/static/css/main.4919bf01.css.map",
+    "main.9aac0c80.js.map": "/CasinoPoker/static/js/main.9aac0c80.js.map",
     "453.a9d50702.chunk.js.map": "/CasinoPoker/static/js/453.a9d50702.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6ffd44e8.css",
-    "static/js/main.af2833d9.js"
+    "static/css/main.4919bf01.css",
+    "static/js/main.9aac0c80.js"
   ]
 }
