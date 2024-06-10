@@ -56,7 +56,6 @@ function App() {
             />
           </div>
           <div className="control-container">
-            <Deck />
             <InfoButton onClick={handleClick} />
             <Player
               onClick={() => {
@@ -74,10 +73,24 @@ function App() {
                 actionType={state.secondButtonNextState}
                 state={state.secondButtonViewState}
               />
+            </div>
+            <div className="buttons-container">
               <ControlButton
                 text={state.thirdButton}
                 actionType={state.thirdButtonNextState}
                 state={state.thirdButtonViewState}
+              />
+              <ControlButton
+                text={state.fourthButton}
+                actionType={state.fourthButtonNextState}
+                state={state.fourthButtonViewState}
+              />
+            </div>
+            <div className="buttons-container">
+              <ControlButton
+                text={state.fifthButton}
+                actionType={state.fifthButtonNextState}
+                state={state.fifthButtonViewState}
               />
             </div>
           </div>

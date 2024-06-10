@@ -17,7 +17,9 @@ export const actionTypes = {
   PLACE_BET: "PLACE_BET",
   PLACE_BONUS_BET: "PLACE_BONUS_BET",
   PLACE_BONUS_BET2: "PLACE_BONUS_BET2",
+  RESET_BETS: "RESET_BETS",
 
+  CHECK_BETS: "CHECK_BETS",
   DEAL_CARDS: "DEAL_CARDS",
   DEAL_FLOP: "DEAL_FLOP",
   DEAL_TURN: "DEAL_TURN",
@@ -55,17 +57,21 @@ export const initialState = {
 
   // buttons for the game
   firstButton: "Start",
-  secondButton: "Bet",
-  thirdButton: "Bonus",
-  currentState: "NOT_STARTED",
-  firstButtonNextState: actionTypes.DEAL_CARDS,
-  secondButtonNextState: actionTypes.PLACE_BET,
-  thirdButtonNextState: actionTypes.PLACE_BONUS_BET,
-  fourthButtonNextState: actionTypes.PLACE_BONUS_BET2,
+  firstButtonNextState: actionTypes.CHECK_BETS,
   firstButtonViewState: true,
+  secondButton: "Bet",
+  secondButtonNextState: actionTypes.PLACE_BET,
   secondButtonViewState: true,
+  thirdButton: "Bonus",
+  thirdButtonNextState: actionTypes.PLACE_BONUS_BET,
   thirdButtonViewState: true,
+  fourthButton: "ExtraBonus",
+  fourthButtonNextState: actionTypes.PLACE_BONUS_BET2,
   fourthButtonViewState: true,
+  fifthButton: "Reset",
+  fifthButtonNextState: actionTypes.RESET_BETS,
+  fifthButtonViewState: true,
+  currentState: "NOT_STARTED",
   checkState: false,
 
   // cards for the game
@@ -87,23 +93,15 @@ export const initialState = {
 };
 
 const getMaxBet = (funds) => {
-  const fifthOfFunds = funds / 5;
+  const neededFunds = funds / 3;
   let maxBet = minBet;
-  while (maxBet + minBet <= fifthOfFunds && maxBet + minBet <= 20) {
+  while (maxBet + minBet <= neededFunds && maxBet + minBet <= 20) {
     maxBet += minBet;
   }
   return maxBet;
 };
 
 const getMaxBonusBet = (funds, betValue) => {
-  const bonusBet = funds - betValue;
-  if (bonusBet > 5) {
-    return 5;
-  }
-  return bonusBet;
-};
-
-const getMaxBonusBet2 = (funds, betValue) => {
   const bonusBet = funds - betValue;
   if (bonusBet > 5) {
     return 5;
@@ -139,6 +137,34 @@ export const gameReducer = (state, action) => {
         bonusBet: bonusBet,
         currentState: "BETTING",
       };
+    // PLACING A EXTRA BONUS BET
+    case actionTypes.PLACE_BONUS_BET2:
+      const bonusBet2 = state.bonusBet2 + 1;
+      const maxBonusBet2 = getMaxBonusBet(state.funds, state.betValue);
+      if (bonusBet2 > maxBonusBet2) {
+        return { ...state, bonusBet2: maxBonusBet2, fourthButton: "MaxBet" };
+      }
+      return {
+        ...state,
+        bonusBet2: bonusBet2,
+        currentState: "BETTING",
+      };
+    // RESET BETS
+    case actionTypes.RESET_BETS:
+      return {
+        ...state,
+        betValue: minBet,
+        bonusBet: 0,
+        bonusBet2: 0,
+        currentState: "BETTING",
+      };
+
+    // CHECKING BETS
+    case actionTypes.CHECK_BETS:
+      return {
+        ...state,
+        currentState: "CHECK_BETS",
+      };
 
     // STARTING THE GAME
     // DEALING CARDS TO PLAYER AND DEALER
@@ -160,6 +186,8 @@ export const gameReducer = (state, action) => {
         firstButtonNextState: actionTypes.DEAL_FLOP,
         secondButtonNextState: actionTypes.FOLD,
         thirdButtonViewState: false,
+        fourthButtonViewState: false,
+        fifthButtonViewState: false,
         currentState: "STARTED",
       };
 
@@ -175,14 +203,15 @@ export const gameReducer = (state, action) => {
 
       if (bonusWinnings > 0) {
         flopLog = `Player wins ${
-          bonusWinnings * state.bonusBet
-        }$ with bonus bet. Players funds are now ${updatedFunds}$`;
+          bonusWinnings * state.bonusBet - state.bonusBet
+        }$ with Bonus bet. Players funds are now ${updatedFunds}$`;
       } else if (state.bonusBet === 0) {
         flopLog = `Bonus bet not played`;
       } else {
-        flopLog = `Player loses ${state.bonusBet}$. Players funds are now ${updatedFunds}$`;
+        flopLog = `Player loses ${state.bonusBet}$ Bonus bet. Players funds are now ${updatedFunds}$`;
       }
-      if (updatedFunds < potValueFlop + state.originalBet) {
+
+      if (state.funds < potValueFlop + state.originalBet + state.bonusBet2) {
         return {
           ...state,
           winnerPrint: flopLog,
@@ -226,7 +255,10 @@ export const gameReducer = (state, action) => {
 
           currentState: "CHECK_TURN",
         };
-      } else if (state.funds < potValueTurn + state.originalBet) {
+      } else if (
+        state.funds <
+        potValueTurn + state.originalBet + state.bonusBet2
+      ) {
         return {
           ...state,
           deck: deckTurn,
@@ -269,6 +301,7 @@ export const gameReducer = (state, action) => {
 
     // CHECKING THE WINNER
     case actionTypes.CHECK_WINNER:
+      let bonus2Log = "";
       const endPlayerHand = state.playerHand;
       const endDealerHand = state.dealerHand;
       const tableCards = state.tableCards.concat(
@@ -277,9 +310,23 @@ export const gameReducer = (state, action) => {
         state.riverCard
       );
       const bonusWinnings2 = isBonusBet2Win(endPlayerHand, tableCards);
+      const updatedFunds2 =
+        state.funds + bonusWinnings2 * state.bonusBet2 - state.bonusBet2;
+
+      if (bonusWinnings2 > 0) {
+        bonus2Log = `Player wins ${
+          bonusWinnings2 * state.bonusBet2 - state.bonusBet2
+        }$ with ExtraBonus bet. Players funds are now ${updatedFunds2}$`;
+      } else if (state.bonusBet2 === 0) {
+        bonus2Log = `ExtraBonus bet not played`;
+      } else {
+        bonus2Log = `Player loses ${state.bonusBet2}$ ExtraBonus bet. Players funds are now ${updatedFunds2}$`;
+      }
       const winner = evaluateWinner(endPlayerHand, endDealerHand, tableCards);
       return {
         ...state,
+        winnerPrint: bonus2Log,
+        funds: updatedFunds2,
         playerHand: endPlayerHand,
         dealerHand: endDealerHand,
         firstButton: winner,
@@ -327,12 +374,14 @@ export const gameReducer = (state, action) => {
         };
       } else if (state.winner === 3) {
         const log = `Player folded and lost ${
-          state.potValue + state.bonusBet
-        }$. Players funds are now ${state.funds - state.potValue}$`;
+          state.potValue + state.bonusBet + state.bonusBet2
+        }$. Players funds are now ${
+          state.funds - state.potValue - state.bonusBet2
+        }$`;
         return {
           ...state,
           winnerPrint: log,
-          funds: state.funds - state.potValue,
+          funds: state.funds - state.potValue - state.bonusBet2,
           potValue: 0,
           firstButton: "NewBet",
           secondButton: "SameBet",
@@ -371,6 +420,7 @@ export const gameReducer = (state, action) => {
         potValue: 0,
         betValue: minBet,
         bonusBet: 0,
+        bonusBet2: 0,
         firstButton: "Start",
         secondButton: "Bet",
         thirdButton: "Bonus",
@@ -379,6 +429,8 @@ export const gameReducer = (state, action) => {
         secondButtonNextState: actionTypes.PLACE_BET,
         thirdButtonNextState: actionTypes.PLACE_BONUS_BET,
         thirdButtonViewState: true,
+        fourthButtonViewState: true,
+        fifthButtonViewState: true,
         playerHand: [],
         dealerHand: [],
         dealerHandState: false,

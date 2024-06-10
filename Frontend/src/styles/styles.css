@@ -166,14 +166,14 @@
 .deck {
   display: flex;
   flex-direction: row-reverse;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
   position: relative;
   margin: 10px;
 }
 
 .deck > * {
-  margin-right: -110px;
+  margin-right: -118px;
   transform: rotate(3deg);
 }
 

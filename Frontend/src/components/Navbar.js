@@ -21,6 +21,7 @@ const Navbar = () => {
         <Card suit="♥" value="k" color="darkRed" />
         <Card suit="♠" value="e" />
         <Card suit="♦" value="r" color="darkRed" />
+        <Card suit="♣" value="🃏" />
       </div>
     </div>
   );

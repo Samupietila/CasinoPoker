@@ -23,15 +23,15 @@ export function isBonusBetWin(hand) {
   const sortedHand = hand.sort((a, b) => b.value - a.value);
   if (sortedHand[0].value === sortedHand[1].value) {
     if (sortedHand[0].value === 14) {
-      return 50;
+      return 51;
     } else if (sortedHand[0].value >= 11 && sortedHand[0].value <= 13) {
-      return 10;
+      return 11;
     }
   } else if (sortedHand[0].value === 14) {
     if (sortedHand[1].value === 13) {
-      return sortedHand[0].suit === sortedHand[1].suit ? 40 : 20;
+      return sortedHand[0].suit === sortedHand[1].suit ? 41 : 21;
     } else if (sortedHand[1].value === 12 || sortedHand[1].value === 11) {
-      return sortedHand[0].suit === sortedHand[1].suit ? 30 : 0;
+      return sortedHand[0].suit === sortedHand[1].suit ? 31 : 0;
     }
   }
   return 0;
@@ -42,15 +42,15 @@ export function isBonusBet2Win(hand, tableCards) {
   const bestHand = getBestHand(hand, tableCards);
   switch (bestHand.rank) {
     case 9:
-      return 100;
+      return 101;
     case 8:
-      return 50;
+      return 51;
     case 7:
-      return 10;
+      return 11;
     case 6:
-      return 7;
+      return 8;
     case 5:
-      return 4;
+      return 5;
   }
   return 0;
 }

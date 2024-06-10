@@ -76,7 +76,24 @@ const InfoPopUp = ({ trigger, setTrigger }) => {
                 <li>K-K or Q-Q or J-J 10:1</li>
               </ul>
             </li>
-            <li>Extra Bonus: Coming soon!</li>
+            <li>
+              Extra Bonus: In addition to the CasinoPoker base game, the player
+              can also participate in the optional Extra Bonus game, which can
+              be played alongside the base game and only when participating in
+              the base game. In the Extra Bonus game, you can bet between 1-5
+              dollars. The win is determined based on the value of the player's
+              final five-card poker hand. The player can use 0-2 of their hole
+              cards to form this hand. The player must pay the first
+              continuation bet of the base game (flop) to keep the Extra Bonus
+              game active.
+              <ul>
+                <li>Straight Flush 100:1</li>
+                <li>Four of a Kind 50:1</li>
+                <li>Full House 10:1</li>
+                <li>Flush 7:1</li>
+                <li>Straight 4:1</li>
+              </ul>
+            </li>
           </ul>
           <p>Hand Rankings (Lowest to Highest):</p>
           <ul>

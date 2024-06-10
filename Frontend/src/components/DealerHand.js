@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import Card from "./Card";
 import { GameContext } from "../contexts/GameContext";
+import Deck from "./Deck";
 
 const DealerHand = () => {
   const { state } = useContext(GameContext);
@@ -24,6 +25,7 @@ const DealerHand = () => {
           />
         )}
       </div>
+      <Deck />
     </div>
   );
 };

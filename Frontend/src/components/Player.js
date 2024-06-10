@@ -44,6 +44,7 @@ const Player = ({ onClick }) => {
       <Info label="Pot:" value={debouncePotValue} animate={false} />
       <Info label="Current Bet:" value={state.betValue} animate={false} />
       <Info label="Bonus bet:" value={state.bonusBet} animate={false} />
+      <Info label="ExtraBonus bet:" value={state.bonusBet2} animate={false} />
       <Info label="Player Balance:" value={state.funds} />
     </div>
   );
