@@ -1,4 +1,4 @@
-// Purpose: Evaluate the winner of a poker game. the logic is mostly made with Copilot.
+// Purpose: Evaluate the winner of a poker game.
 
 // get all possible combinations of 5 cards
 function getCombinations(cards, k) {
